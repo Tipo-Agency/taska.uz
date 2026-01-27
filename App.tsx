@@ -10,11 +10,15 @@ import { ContactModal } from './components/ContactModal';
 import { ContactForm } from './components/ContactForm';
 import { Button } from './components/Button';
 import { ArrowRight } from 'lucide-react';
+import { trackMetrikaGoal } from './services/metrics';
 
 const App: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const openModal = () => setIsModalOpen(true);
+  const openModal = () => {
+    trackMetrikaGoal('click_form_open');
+    setIsModalOpen(true);
+  };
   const closeModal = () => setIsModalOpen(false);
 
   return (
@@ -49,6 +53,7 @@ const App: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full sm:w-auto"
+                  onClick={() => trackMetrikaGoal('demo_click')}
                 >
                   <Button
                     variant="secondary"
@@ -89,6 +94,7 @@ const App: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full sm:w-auto"
+                  onClick={() => trackMetrikaGoal('demo_click')}
                 >
                   <Button
                     variant="secondary"
@@ -137,6 +143,7 @@ const App: React.FC = () => {
                      target="_blank"
                      rel="noopener noreferrer"
                      className="w-full sm:w-auto"
+                     onClick={() => trackMetrikaGoal('demo_click')}
                    >
                      <Button
                        variant="outline"

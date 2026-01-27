@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from './Button';
 import { ArrowRight, Activity, Zap, BarChart3, Users, Calendar } from 'lucide-react';
+import { trackMetrikaGoal } from '../services/metrics';
 
 interface HeroProps {
   onOpenModal: () => void;
@@ -55,6 +56,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenModal }) => {
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto"
+              onClick={() => trackMetrikaGoal('demo_click')}
             >
               <Button
                 variant="secondary"

@@ -1,61 +1,103 @@
-import { collection, addDoc } from "firebase/firestore"; 
+import { collection, addDoc, serverTimestamp, updateDoc } from "firebase/firestore"; 
 import { db } from "../firebase";
 import { Lead } from "../types";
+import { trackMetrikaGoal } from "./metrics";
+import { attachUTMToData } from "./utmTracking";
 
-// Configuration
-const TELEGRAM_BOT_TOKEN = "8325087127:AAEqTwOnYLttRgLn1Po8jjox42dEH1RR_io";
+const FUNNEL_ID = "funnel-1767550287550";
 
-// ВАЖНО: Сюда нужно вставить твой Chat ID. 
-// Чтобы его узнать, напиши боту @userinfobot и скопируй "Id".
-// Если это группа/канал, добавь бота администратором и вставь ID группы (начинается с -100...)
-const TELEGRAM_CHAT_ID: string = "438762836"; 
+const getFirestore = () => {
+  if (!db) {
+    console.error("❌ Firestore is not initialized. Check firebase.ts configuration.");
+    return null;
+  }
+  return db;
+};
+
+function removeUndefinedFields<T extends Record<string, any>>(obj: T): Partial<T> {
+  const cleaned: any = {};
+  for (const key in obj) {
+    if (obj[key] !== undefined) {
+      cleaned[key] = obj[key];
+    }
+  }
+  return cleaned;
+}
 
 export const submitLead = async (leadData: Lead): Promise<boolean> => {
   try {
-    const promises = [];
+    const firestore = getFirestore();
 
-    // 1. Save to Firebase (if configured)
-    if (db) {
-      promises.push(
-        addDoc(collection(db, "leads"), {
-          ...leadData,
-          createdAt: new Date()
-        }).catch(err => console.error("Firebase save error:", err))
-      );
+    // Маппим простую форму (name, contact, message, source)
+    // в структуру, похожую на tipa.uz LeadData
+    const name = (leadData.name || "").trim();
+    const [firstName, ...restName] = name.split(/\s+/);
+    const lastName = restName.join(" ") || "";
+
+    const rawContact = (leadData.contact || "").trim();
+    let phoneCountryCode = "";
+    let phoneLocal = rawContact;
+
+    if (rawContact.startsWith("+")) {
+      const parts = rawContact.split(/\s+/);
+      phoneCountryCode = parts[0];
+      phoneLocal = parts.slice(1).join(" ") || rawContact.slice(phoneCountryCode.length).trim();
     }
 
-    // 2. Send to Telegram
-    if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID !== "YOUR_CHAT_ID_HERE") {
-      const text = `
-🚀 <b>Новая заявка на Taska.uz!</b>
+    const baseData: Record<string, any> = {
+      firstName: firstName || leadData.name,
+      lastName: lastName || undefined,
+      phone: phoneLocal,
+      phoneCountryCode: phoneCountryCode || undefined,
+      task: leadData.message || undefined,
+      sourceSection: leadData.source,
+    };
 
-👤 <b>Имя:</b> ${leadData.name}
-📱 <b>Контакт:</b> ${leadData.contact}
-💬 <b>Задача:</b> ${leadData.message || "Не указана"}
-📍 <b>Источник:</b> ${leadData.source === 'modal_form' ? 'Модальное окно' : 'Форма на сайте'}
-⏰ <b>Время:</b> ${leadData.date}
-      `;
+    const dataWithUTM = attachUTMToData(baseData);
 
-      const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-      
-      promises.push(
-        fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            chat_id: TELEGRAM_CHAT_ID,
-            text: text,
-            parse_mode: 'HTML'
-          })
-        }).catch(err => console.error("Telegram send error:", err))
-      );
+    const fullPhone = (phoneCountryCode ? phoneCountryCode + " " : "") + phoneLocal.replace(/\s/g, "");
+
+    const timestamp = serverTimestamp();
+
+    const dealData: any = {
+      ...dataWithUTM,
+      // tipa.uz-like structure
+      amount: 0,
+      assigneeId: "",
+      contactName: name || leadData.name,
+      currency: "UZS",
+      funnelId: FUNNEL_ID,
+      isArchived: false,
+      notes: `Раздел сайта: ${leadData.source}${
+        fullPhone ? ` Телефон: ${fullPhone}` : ""
+      }${leadData.message ? ` Задача: ${leadData.message}` : ""}`,
+      phone: fullPhone,
+      source: "site",
+      sourceSection: leadData.source,
+      stage: "new",
+      status: "new",
+      task: leadData.message || undefined,
+      title: `Заявка с сайта: ${firstName || leadData.name || "Без имени"}`,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    };
+
+    const cleanedDealData = removeUndefinedFields(dealData);
+
+    if (firestore) {
+      const docRef = await addDoc(collection(firestore, "deals"), cleanedDealData);
+      // Сохраняем id документа внутрь самой сделки, как в tipa.uz
+      await updateDoc(docRef, { id: docRef.id });
+
+      if (process.env.NODE_ENV === "development") {
+        console.log("✅ Lead created successfully with ID:", docRef.id);
+      }
     } else {
-      console.log("Telegram simulation (Configure CHAT_ID in services/api.ts):", leadData);
+      console.log("Firestore not configured, lead (landing) data:", cleanedDealData);
     }
 
-    await Promise.all(promises);
+    // Отмечаем конверсию в Метрике
+    trackMetrikaGoal('lead_submit');
     return true;
 
   } catch (error) {

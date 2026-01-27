@@ -21,13 +21,13 @@ export const Footer: React.FC = () => {
               Создаем порядок из хаоса. Индивидуальные IT-решения для бизнеса в Узбекистане.
             </p>
             <div className="flex gap-4">
-              <a href="#" aria-label="Telegram" className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-brand hover:text-white hover:border-brand transition-all shadow-sm">
+              <a href="https://t.me/asdonskikh" aria-label="Telegram" className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-brand hover:text-white hover:border-brand transition-all shadow-sm">
                 <Send size={18} />
               </a>
-              <a href="#" aria-label="Instagram" className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-brand hover:text-white hover:border-brand transition-all shadow-sm">
+              <a href="https://www.instagram.com/taska.uz?igsh=MW84a285MnZwcG1uag%3D%3D&utm_source=qr" aria-label="Instagram" className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-brand hover:text-white hover:border-brand transition-all shadow-sm">
                 <Instagram size={18} />
               </a>
-              <a href="#" aria-label="Facebook" className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-brand hover:text-white hover:border-brand transition-all shadow-sm">
+              <a href="https://facebook.com/taska.uz" aria-label="Facebook" className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-brand hover:text-white hover:border-brand transition-all shadow-sm">
                 <Facebook size={18} />
               </a>
             </div>
@@ -58,7 +58,7 @@ export const Footer: React.FC = () => {
             <ul className="space-y-3 text-sm text-gray-500">
               <li>Tashkent, Uzbekistan</li>
               <li><a href="tel:+998888000549" className="hover:text-brand transition-colors font-medium text-gray-700">+998 88 800 05 49</a></li>
-              <li><a href="mailto:info@taska.uz" className="hover:text-brand transition-colors">info@taska.uz</a></li>
+              <li><a href="mailto:donskikhas@gmail.com" className="hover:text-brand transition-colors">donskikhas@gmail.com</a></li>
             </ul>
           </div>
         </div>
