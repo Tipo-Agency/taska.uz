@@ -1,46 +1,26 @@
-const METRIKA_ID = 106475005;
+declare global {
+  interface Window {
+    trackMetrikaGoal?: (goal: string) => void;
+  }
+}
 
 export const trackMetrikaGoal = (goal: string) => {
   if (typeof window === 'undefined') return;
-  
-  const win = window as any;
-  
-  // Если Метрика уже загружена и готова
-  if (typeof win.ym === 'function') {
-    try {
-      win.ym(METRIKA_ID, 'reachGoal', goal);
-      if (process.env.NODE_ENV === 'development') {
-        console.log('✅ Yandex.Metrika goal sent:', goal);
-      }
-      return;
-    } catch (err) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('❌ Yandex.Metrika error:', err);
+  // Вызов в следующем тике, чтобы Метрика успела обработать очередь после init
+  const send = () => {
+    if (typeof window.trackMetrikaGoal === 'function') {
+      window.trackMetrikaGoal(goal);
+    } else {
+      const w = window as any;
+      if (typeof w.ym === 'function') {
+        try { w.ym(106475005, 'reachGoal', goal); } catch (_) {}
       }
     }
-  }
-  
-  // Если Метрика еще не загружена, используем очередь
-  if (!win.ym) {
-    win.ym = win.ym || function() {
-      (win.ym.a = win.ym.a || []).push(arguments);
-    };
-    win.ym.l = 1 * new Date();
-  }
-  
-  // Добавляем цель в очередь
-  if (win.ym.a) {
-    win.ym.a.push([METRIKA_ID, 'reachGoal', goal]);
-    if (process.env.NODE_ENV === 'development') {
-      console.log('📋 Yandex.Metrika goal queued:', goal);
-    }
+  };
+  if (typeof requestAnimationFrame !== 'undefined') {
+    requestAnimationFrame(() => send());
   } else {
-    // Fallback: пытаемся вызвать напрямую
-    try {
-      win.ym(METRIKA_ID, 'reachGoal', goal);
-    } catch {
-      // ignore
-    }
+    setTimeout(send, 0);
   }
 };
 
