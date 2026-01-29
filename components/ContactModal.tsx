@@ -78,7 +78,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
                       <CheckCircle size={32} />
                     </div>
                     <h3 className="text-2xl font-bold text-gray-900 mb-2">Заявка отправлена!</h3>
-                    <p className="text-gray-500 mb-6">Мы свяжемся с вами в Telegram в ближайшее время.</p>
+                    <p className="text-gray-500 mb-6">Мы свяжемся с вами по указанному номеру в ближайшее время.</p>
                     <Button onClick={resetForm}>Отлично</Button>
                   </div>
                 ) : (

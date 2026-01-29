@@ -82,7 +82,7 @@ export const ContactForm: React.FC = () => {
                   <CheckCircle size={40} />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Заявка принята!</h3>
-                <p className="text-gray-500 mb-8">Менеджер Taska напишет вам в Telegram в ближайшее время.</p>
+                <p className="text-gray-500 mb-8">Менеджер Taska свяжется с вами по указанному номеру в ближайшее время.</p>
                 <Button variant="outline" onClick={() => setSubmitted(false)}>
                   Отправить еще одну
                 </Button>
