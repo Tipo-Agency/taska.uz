@@ -70,17 +70,6 @@ export const ContactForm: React.FC = () => {
                 {t('contact.freeConsult')}
             </div>
 
-            <div className="flex gap-3 mb-6">
-              <a href={TG_URL} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-gray-200 hover:border-brand/50 hover:bg-brand/5 transition-colors text-gray-700 font-medium text-sm">
-                <Send size={18} className="text-brand" />
-                {t('contact.writeTg')}
-              </a>
-              <a href={`tel:${PHONE.replace(/\s/g, '')}`} className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-gray-200 hover:border-brand/50 hover:bg-brand/5 transition-colors text-gray-700 font-medium text-sm">
-                <Phone size={18} className="text-brand" />
-                {t('contact.call')}
-              </a>
-            </div>
-
             {submitted ? (
               <motion.div 
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -135,6 +124,17 @@ export const ContactForm: React.FC = () => {
                 >
                   {isLoading ? t('contact.sending') : t('contact.submit')}
                 </Button>
+
+                <div className="flex gap-3">
+                  <a href={TG_URL} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-gray-200 hover:border-brand/50 hover:bg-brand/5 transition-colors text-gray-700 font-medium text-sm">
+                    <Send size={18} className="text-brand" />
+                    {t('contact.writeTg')}
+                  </a>
+                  <a href={`tel:${PHONE.replace(/\s/g, '')}`} className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-gray-200 hover:border-brand/50 hover:bg-brand/5 transition-colors text-gray-700 font-medium text-sm">
+                    <Phone size={18} className="text-brand" />
+                    {t('contact.call')}
+                  </a>
+                </div>
                 
                 <p className="text-[10px] text-gray-400 text-center">
                   {t('contact.privacy')}

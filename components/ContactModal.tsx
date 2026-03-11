@@ -82,17 +82,6 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="flex gap-2">
-                      <a href={TG_URL} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-gray-200 hover:border-brand/50 hover:bg-brand/5 transition-colors text-gray-700 font-medium text-sm">
-                        <Send size={16} className="text-brand" />
-                        {t('contact.writeTg')}
-                      </a>
-                      <a href={`tel:${PHONE.replace(/\s/g, '')}`} className="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-gray-200 hover:border-brand/50 hover:bg-brand/5 transition-colors text-gray-700 font-medium text-sm">
-                        <Phone size={16} className="text-brand" />
-                        {t('contact.call')}
-                      </a>
-                    </div>
-
                     <div>
                       <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('modal.startProject')}</h3>
                       <p className="text-sm text-gray-500 mb-4">{t('modal.hint')}</p>
@@ -128,6 +117,17 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
                     >
                       {isLoading ? t('modal.sending') : t('modal.submit')}
                     </Button>
+
+                    <div className="flex gap-2">
+                      <a href={TG_URL} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-gray-200 hover:border-brand/50 hover:bg-brand/5 transition-colors text-gray-700 font-medium text-sm">
+                        <Send size={16} className="text-brand" />
+                        {t('contact.writeTg')}
+                      </a>
+                      <a href={`tel:${PHONE.replace(/\s/g, '')}`} className="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-gray-200 hover:border-brand/50 hover:bg-brand/5 transition-colors text-gray-700 font-medium text-sm">
+                        <Phone size={16} className="text-brand" />
+                        {t('contact.call')}
+                      </a>
+                    </div>
                     
                     <p className="text-[10px] text-gray-400 text-center">
                       {t('modal.privacy')}
