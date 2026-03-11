@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, HelpCircle } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface FAQItemProps {
   question: string;
@@ -48,28 +49,13 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen, onClick }) 
 
 export const FAQ: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
-
+  const { t } = useLanguage();
   const faqs = [
-    {
-      question: "Сколько времени занимает внедрение?",
-      answer: "Базовую версию (MVP) мы запускаем за 14 дней. Это позволяет сразу начать работать и получать данные. Полная настройка сложной ERP системы под ключ обычно занимает от 1 до 2 месяцев в зависимости от количества модулей."
-    },
-    {
-      question: "Нужно ли платить ежемесячно?",
-      answer: "У нас гибкая система. Мы можем разработать систему, которая будет полностью принадлежать вам (One-time payment), и вы будете платить только за сервер (~$10-20/мес). Либо мы можем работать по модели подписки с нашей технической поддержкой."
-    },
-    {
-      question: "Можно ли интегрировать с моим банком / 1С?",
-      answer: "Да, наша архитектура позволяет подключаться к любым внешним сервисам по API. Мы интегрируем платежные системы (Payme, Click), телефонию, 1С, МойСклад и другие инструменты."
-    },
-    {
-      question: "Смогу ли я сам менять настройки?",
-      answer: "Конечно. Мы создаем удобную панель администратора, где вы можете управлять сотрудниками, правами доступа, справочниками и контентом без знания кода."
-    },
-    {
-      question: "Как работает поддержка?",
-      answer: "После сдачи проекта мы даем 1 месяц бесплатной гарантийной поддержки. Далее вы можете заключить договор на техническое сопровождение (SLA), чтобы мы следили за серверами и обновляли систему."
-    }
+    { question: t('faq.q1'), answer: t('faq.a1') },
+    { question: t('faq.q2'), answer: t('faq.a2') },
+    { question: t('faq.q3'), answer: t('faq.a3') },
+    { question: t('faq.q4'), answer: t('faq.a4') },
+    { question: t('faq.q5'), answer: t('faq.a5') },
   ];
 
   return (
@@ -78,13 +64,13 @@ export const FAQ: React.FC = () => {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-xs font-bold uppercase tracking-wider mb-4">
             <HelpCircle size={14} />
-            <span>FAQ</span>
+            <span>{t('faq.badge')}</span>
           </div>
           <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4">
-            Частые вопросы
+            {t('faq.title')}
           </h2>
           <p className="text-gray-500 text-lg">
-            Все, что вы хотели узнать о разработке, но стеснялись спросить.
+            {t('faq.subtitle')}
           </p>
         </div>
 

@@ -4,8 +4,10 @@ import { motion } from 'framer-motion';
 import { Send, CheckCircle, Smartphone, Clock, LayoutDashboard } from 'lucide-react';
 import { submitLead } from '../services/api';
 import { formatUzPhone } from '../services/phone';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export const ContactForm: React.FC = () => {
+  const { t } = useLanguage();
   const [submitted, setSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -45,18 +47,17 @@ export const ContactForm: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           
           <div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">Хватит терять лиды <br/><span className="text-brand">на ровном месте.</span></h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">{t('contact.heading')} <br/><span className="text-brand">{t('contact.heading2')}</span></h2>
             <p className="text-gray-500 text-lg mb-10 leading-relaxed">
-              Мы не продаем "коробки". Мы проектируем цифровой позвоночник вашего бизнеса. 
-              Оставьте заявку, и мы покажем, где вы теряете деньги прямо сейчас.
+              {t('contact.subtitle')}
             </p>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                {[
-                 { icon: Clock, title: "Запуск за 14 дней", desc: "MVP версия через 2 недели" },
-                 { icon: Smartphone, title: "Mobile First", desc: "Удобно с телефона" },
-                 { icon: LayoutDashboard, title: "Личный кабинет", desc: "Для вас и сотрудников" },
-                 { icon: CheckCircle, title: "Гарантия", desc: "Поддержка 24/7" },
+                 { icon: Clock, title: t('contact.launch'), desc: t('contact.launchDesc') },
+                 { icon: Smartphone, title: t('contact.mobileFirst'), desc: t('contact.mobileFirstDesc') },
+                 { icon: LayoutDashboard, title: t('contact.personalCabinet'), desc: t('contact.personalCabinetDesc') },
+                 { icon: CheckCircle, title: t('contact.guarantee'), desc: t('contact.guaranteeDesc') },
                ].map((item, i) => (
                  <div key={i} className="p-4 rounded-2xl bg-white border border-gray-200 hover:border-brand/30 hover:shadow-lg transition-all">
                     <item.icon className="text-brand mb-3" size={24} />
@@ -69,7 +70,7 @@ export const ContactForm: React.FC = () => {
 
           <div className="glass-panel p-8 rounded-3xl relative bg-white shadow-xl border border-gray-100">
             <div className="absolute -top-4 -right-4 bg-brand text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider animate-bounce shadow-lg shadow-brand/30">
-                Free Consultation
+                {t('contact.freeConsult')}
             </div>
 
             {submitted ? (
@@ -81,17 +82,17 @@ export const ContactForm: React.FC = () => {
                 <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center text-brand mb-6 border border-brand/20">
                   <CheckCircle size={40} />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Заявка принята!</h3>
-                <p className="text-gray-500 mb-8">Менеджер Taska свяжется с вами по указанному номеру в ближайшее время.</p>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('contact.successTitle')}</h3>
+                <p className="text-gray-500 mb-8">{t('contact.successText')}</p>
                 <Button variant="outline" onClick={() => setSubmitted(false)}>
-                  Отправить еще одну
+                  {t('contact.sendAnother')}
                 </Button>
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Обсудить проект</h3>
-                  <p className="text-sm text-gray-500">Заполните форму, это займет 30 секунд.</p>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('contact.discussProject')}</h3>
+                  <p className="text-sm text-gray-500">{t('contact.formHint')}</p>
                 </div>
                 
                 <div className="space-y-4">
@@ -102,7 +103,7 @@ export const ContactForm: React.FC = () => {
                       onChange={(e) => setName(e.target.value)}
                       type="text" 
                       className="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-4 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-brand/20 focus:border-brand/50 outline-none transition-all focus:bg-white"
-                      placeholder="Как вас зовут?"
+                      placeholder={t('contact.namePlaceholder')}
                     />
                   </div>
                   <div>
@@ -113,7 +114,7 @@ export const ContactForm: React.FC = () => {
                       type="tel" 
                       inputMode="tel"
                       className="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-4 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-brand/20 focus:border-brand/50 outline-none transition-all focus:bg-white"
-                      placeholder="+998 90 123 45 67"
+                      placeholder={t('contact.phonePlaceholder')}
                     />
                   </div>
                   <div>
@@ -122,7 +123,7 @@ export const ContactForm: React.FC = () => {
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       className="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-4 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-brand/20 focus:border-brand/50 outline-none transition-all resize-none focus:bg-white"
-                      placeholder="Кратко о задаче (например: нужна CRM для салона красоты)"
+                      placeholder={t('contact.messagePlaceholder')}
                     />
                   </div>
                 </div>
@@ -133,11 +134,11 @@ export const ContactForm: React.FC = () => {
                   disabled={isLoading}
                   icon={isLoading ? undefined : <Send size={20} />}
                 >
-                  {isLoading ? 'Отправляем...' : 'Получить разбор'}
+                  {isLoading ? t('contact.sending') : t('contact.submit')}
                 </Button>
                 
                 <p className="text-[10px] text-gray-400 text-center">
-                  Ваши данные в безопасности. Мы не передаем их третьим лицам.
+                  {t('contact.privacy')}
                 </p>
               </form>
             )}

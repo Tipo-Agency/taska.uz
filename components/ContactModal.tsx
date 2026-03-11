@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './Button';
 import { submitLead } from '../services/api';
 import { formatUzPhone } from '../services/phone';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface ContactModalProps {
 }
 
 export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
+  const { t } = useLanguage();
   const [submitted, setSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -77,15 +79,15 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
                     <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center text-brand mb-4">
                       <CheckCircle size={32} />
                     </div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">Заявка отправлена!</h3>
-                    <p className="text-gray-500 mb-6">Мы свяжемся с вами по указанному номеру в ближайшее время.</p>
-                    <Button onClick={resetForm}>Отлично</Button>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('modal.successTitle')}</h3>
+                    <p className="text-gray-500 mb-6">{t('modal.successText')}</p>
+                    <Button onClick={resetForm}>{t('modal.ok')}</Button>
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-5">
                     <div>
-                      <h3 className="text-2xl font-bold text-gray-900 mb-2">Начать проект</h3>
-                      <p className="text-sm text-gray-500">Расскажите немного о задаче, и мы предложим решение.</p>
+                      <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('modal.startProject')}</h3>
+                      <p className="text-sm text-gray-500">{t('modal.hint')}</p>
                     </div>
 
                     <div className="space-y-4">
@@ -94,7 +96,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         type="text" 
-                        placeholder="Ваше имя"
+                        placeholder={t('modal.namePlaceholder')}
                         className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-brand/20 focus:border-brand/50 outline-none transition-all"
                       />
                       <input 
@@ -103,14 +105,14 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
                         onChange={(e) => setContact(formatUzPhone(e.target.value))}
                         type="tel" 
                         inputMode="tel"
-                        placeholder="+998 90 123 45 67"
+                        placeholder={t('contact.phonePlaceholder')}
                         className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-brand/20 focus:border-brand/50 outline-none transition-all"
                       />
                       <textarea 
                         rows={3}
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-                        placeholder="Какую задачу нужно решить? (например: автоматизация отдела продаж)"
+                        placeholder={t('modal.messagePlaceholder')}
                         className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-brand/20 focus:border-brand/50 outline-none transition-all resize-none"
                       />
                     </div>
@@ -121,11 +123,11 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
                       disabled={isLoading}
                       icon={isLoading ? undefined : <Send size={18} />}
                     >
-                      {isLoading ? 'Отправка...' : 'Отправить заявку'}
+                      {isLoading ? t('modal.sending') : t('modal.submit')}
                     </Button>
                     
                     <p className="text-[10px] text-gray-400 text-center">
-                      Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности.
+                      {t('modal.privacy')}
                     </p>
                   </form>
                 )}

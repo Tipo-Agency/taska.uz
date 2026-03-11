@@ -12,8 +12,10 @@ import { ContactForm } from './components/ContactForm';
 import { Button } from './components/Button';
 import { ArrowRight } from 'lucide-react';
 import { trackMetrikaGoal } from './services/metrics';
+import { useLanguage } from './contexts/LanguageContext';
 
 const App: React.FC = () => {
+  const { t } = useLanguage();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => {
@@ -36,10 +38,10 @@ const App: React.FC = () => {
             <div className="flex flex-col md:flex-row items-center justify-between gap-6 rounded-3xl border border-gray-200 bg-gray-50/70 px-6 md:px-10 py-8 md:py-10 shadow-sm">
               <div className="text-left max-w-xl">
                 <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-                  Посмотреть демо модулей Taska
+                  {t('cta.demoTitle')}
                 </h3>
                 <p className="text-gray-500 text-sm md:text-base">
-                  Оставьте контакты для персональной презентации или откройте онлайн-демо прямо сейчас.
+                  {t('cta.demoSubtitle')}
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
@@ -48,7 +50,7 @@ const App: React.FC = () => {
                   className="w-full sm:w-auto"
                   icon={<ArrowRight size={18} />}
                 >
-                  Оставить заявку
+                  {t('cta.leaveRequest')}
                 </Button>
                 <a
                   href="https://demo.taska.uz"
@@ -61,7 +63,7 @@ const App: React.FC = () => {
                     variant="secondary"
                     className="w-full sm:w-auto"
                   >
-                    Демо
+                    {t('hero.demo')}
                   </Button>
                 </a>
               </div>
@@ -71,16 +73,15 @@ const App: React.FC = () => {
 
         <ProcessSection />
 
-        {/* Inline CTA после процессов */}
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6 rounded-3xl border border-gray-200 bg-gray-50/70 px-6 md:px-10 py-8 md:py-10 shadow-sm">
               <div className="text-left max-w-xl">
                 <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-                  Автоматизировать ваши процессы в Taska
+                  {t('cta.automateTitle')}
                 </h3>
                 <p className="text-gray-500 text-sm md:text-base">
-                  Покажем, как ваши текущие бизнес-процессы можно собрать в визуальном редакторе Taska.
+                  {t('cta.automateSubtitle')}
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
@@ -89,7 +90,7 @@ const App: React.FC = () => {
                   className="w-full sm:w-auto"
                   icon={<ArrowRight size={18} />}
                 >
-                  Оставить контакты
+                  {t('cta.leaveContacts')}
                 </Button>
                 <a
                   href="https://demo.taska.uz"
@@ -102,7 +103,7 @@ const App: React.FC = () => {
                     variant="secondary"
                     className="w-full sm:w-auto"
                   >
-                    Демо
+                    {t('hero.demo')}
                   </Button>
                 </a>
               </div>
@@ -126,10 +127,10 @@ const App: React.FC = () => {
                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
                  <div className="text-left max-w-2xl">
                     <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
-                      Готовы трансформировать <br/> свой бизнес?
+                      {t('cta.finalTitle')} <br/> {t('cta.finalTitle2')}
                     </h2>
                     <p className="text-white/80 text-lg md:text-xl font-medium mb-0">
-                      Получите персональный план внедрения системы и расчет стоимости за 15 минут.
+                      {t('cta.finalSubtitle')}
                     </p>
                  </div>
                  <div className="shrink-0 flex flex-col sm:flex-row gap-4">
@@ -139,7 +140,7 @@ const App: React.FC = () => {
                       className="bg-white !text-brand hover:bg-gray-100 border-none shadow-xl w-full sm:w-auto"
                       icon={<ArrowRight size={20}/>}
                    >
-                      Обсудить проект
+                      {t('cta.discussProject')}
                    </Button>
                    <a
                      href="https://demo.taska.uz"
@@ -152,7 +153,7 @@ const App: React.FC = () => {
                        variant="outline"
                        className="w-full sm:w-auto border-white/40 bg-transparent text-white hover:bg-white/10"
                      >
-                       Демо
+                       {t('hero.demo')}
                      </Button>
                    </a>
                  </div>

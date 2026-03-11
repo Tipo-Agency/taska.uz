@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './Button';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface HeaderProps {
   onOpenModal: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
+  const { lang, setLang, t } = useLanguage();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -20,9 +22,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
   }, []);
 
   const navLinks = [
-    { name: 'Модули', href: '#features' },
-    { name: 'Процессы', href: '#processes' },
-    { name: 'Telegram', href: '#integration' },
+    { name: t('header.nav.modules'), href: '#features' },
+    { name: t('header.nav.processes'), href: '#processes' },
+    { name: t('header.nav.telegram'), href: '#integration' },
   ];
 
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -62,7 +64,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
           <div className="flex items-center justify-between">
             <a 
               href="#" 
-              aria-label="На главную"
+              aria-label={t('header.home')}
               className="flex items-center gap-2 group" 
               onClick={(e) => scrollToSection(e, '#')}
             >
@@ -90,8 +92,26 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
                   </a>
                 ))}
               </div>
+              <div className="flex items-center gap-2 mr-4">
+                <button
+                  type="button"
+                  onClick={() => setLang('ru')}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${lang === 'ru' ? 'bg-brand text-white' : 'text-gray-500 hover:bg-gray-200'}`}
+                  aria-label="Русский"
+                >
+                  RU
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLang('uz')}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${lang === 'uz' ? 'bg-brand text-white' : 'text-gray-500 hover:bg-gray-200'}`}
+                  aria-label="O‘zbekcha"
+                >
+                  UZ
+                </button>
+              </div>
               <Button variant="primary" size="sm" onClick={onOpenModal}>
-                Обсудить проект
+                {t('header.cta')}
               </Button>
             </nav>
 
@@ -99,7 +119,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
             <button 
               className="md:hidden text-gray-800 p-2 rounded-full hover:bg-gray-100"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              aria-label={isMobileMenuOpen ? "Закрыть меню" : "Открыть меню"}
+              aria-label={isMobileMenuOpen ? t('header.menu.close') : t('header.menu.open')}
               aria-expanded={isMobileMenuOpen}
             >
               {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -130,12 +150,16 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
                   {link.name}
                 </a>
               ))}
+              <div className="flex gap-2 my-2">
+                <button type="button" onClick={() => setLang('ru')} className={`flex-1 py-2 rounded-lg text-sm font-medium ${lang === 'ru' ? 'bg-brand text-white' : 'bg-gray-100 text-gray-600'}`}>RU</button>
+                <button type="button" onClick={() => setLang('uz')} className={`flex-1 py-2 rounded-lg text-sm font-medium ${lang === 'uz' ? 'bg-brand text-white' : 'bg-gray-100 text-gray-600'}`}>UZ</button>
+              </div>
               <div className="h-px bg-gray-200 w-full my-2"></div>
               <Button variant="primary" className="w-full text-lg py-4" onClick={() => {
                   setIsMobileMenuOpen(false);
                   onOpenModal();
               }}>
-                Начать проект
+                {t('header.startProject')}
               </Button>
             </nav>
           </motion.div>

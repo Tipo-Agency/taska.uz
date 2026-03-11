@@ -6,66 +6,67 @@ import {
   FileText, 
   DollarSign, 
   Briefcase, 
-  Layers,
   BarChart3,
   Bot
 } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export const Features: React.FC = () => {
+  const { t } = useLanguage();
   const modules = [
     {
-      title: "Task Manager",
-      desc: "Канбан, Гант и Спринты. Управление проектами без боли.",
+      title: t('features.taskManager'),
+      desc: t('features.taskManagerDesc'),
       icon: CheckSquare,
-      size: "large", // spans 2 cols
+      size: "large",
       bg: "bg-gradient-to-br from-white to-gray-50",
       accent: "text-blue-600 bg-blue-50"
     },
     {
-      title: "Финансы",
-      desc: "P&L, Cashflow, инвойсинг.",
+      title: t('features.finance'),
+      desc: t('features.financeDesc'),
       icon: DollarSign,
       size: "small",
       bg: "bg-white",
       accent: "text-green-600 bg-green-50"
     },
     {
-      title: "CRM База",
-      desc: "Клиенты, воронки, история.",
+      title: t('features.crmBase'),
+      desc: t('features.crmBaseDesc'),
       icon: Users,
       size: "small",
       bg: "bg-white",
       accent: "text-purple-600 bg-purple-50"
     },
     {
-      title: "Telegram Bot",
-      desc: "Управление бизнесом через чат. Отчеты, задачи и уведомления в кармане.",
+      title: t('features.telegramBot'),
+      desc: t('features.telegramBotDesc'),
       icon: Bot,
-      size: "tall", // spans 2 rows vertically
+      size: "tall",
       bg: "bg-gradient-to-b from-brand/5 to-white border-brand/20",
       accent: "text-brand bg-brand/10"
     },
     {
-      title: "Документы",
-      desc: "Автогенерация договоров по шаблонам.",
+      title: t('features.documents'),
+      desc: t('features.documentsDesc'),
       icon: FileText,
       size: "small",
       bg: "bg-white",
       accent: "text-yellow-600 bg-yellow-50"
     },
     {
-      title: "HR & KPI",
-      desc: "Учет времени и эффективность.",
+      title: t('features.hrKpi'),
+      desc: t('features.hrKpiDesc'),
       icon: Briefcase,
       size: "small",
       bg: "bg-white",
       accent: "text-pink-600 bg-pink-50"
     },
     {
-      title: "Дашборд CEO",
-      desc: "Вся аналитика на одном экране. Реальное время.",
+      title: t('features.ceoDashboard'),
+      desc: t('features.ceoDashboardDesc'),
       icon: BarChart3,
-      size: "wide", // spans bottom
+      size: "wide",
       bg: "bg-white",
       accent: "text-orange-600 bg-orange-50"
     },
@@ -77,11 +78,11 @@ export const Features: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div className="max-w-2xl">
             <h2 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight text-gray-900">
-              Все, что нужно <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-brand-dark">в одной системе</span>
+              {t('features.heading1')} <br/>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-brand-dark">{t('features.heading2')}</span>
             </h2>
             <p className="text-gray-500 text-lg">
-              Мы собираем LEGO для вашего бизнеса. Никакого лишнего функционала, только те модули, которые приносят прибыль.
+              {t('features.subtitle')}
             </p>
           </div>
         </div>
@@ -117,7 +118,7 @@ export const Features: React.FC = () => {
                       <item.icon size={24} />
                     </div>
                     {item.size === 'tall' && (
-                      <div className="px-2 py-1 rounded bg-brand text-white text-xs font-bold">TOP</div>
+                      <div className="px-2 py-1 rounded bg-brand text-white text-xs font-bold">{t('features.top')}</div>
                     )}
                   </div>
                   

@@ -2,12 +2,14 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, MoreVertical, Paperclip, Mic } from 'lucide-react';
 import { Button } from './Button';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface TelegramSectionProps {
   onOpenModal: () => void;
 }
 
 export const TelegramSection: React.FC<TelegramSectionProps> = ({ onOpenModal }) => {
+  const { t } = useLanguage();
   return (
     <section id="integration" className="py-32 bg-white overflow-hidden relative">
       <div className="absolute top-1/2 left-0 w-full h-[500px] bg-brand/5 blur-[120px] -translate-y-1/2 rounded-full pointer-events-none" />
@@ -66,11 +68,11 @@ export const TelegramSection: React.FC<TelegramSectionProps> = ({ onOpenModal })
                   >
                      <div className="w-8 h-8 rounded-full bg-brand flex-shrink-0 flex items-center justify-center text-xs font-bold mt-auto mb-1 text-white">T</div>
                      <div className="bg-[#2C2C2E] p-3 rounded-2xl rounded-bl-sm max-w-[85%] text-sm text-gray-200 shadow-md">
-                        <p>👋 Доброе утро! Сводка на сегодня:</p>
+                        <p>{t('telegram.goodMorning')}</p>
                         <ul className="mt-2 space-y-1 text-gray-400 text-xs">
-                            <li>• 3 новые заявки</li>
-                            <li>• 2 договора на подпись</li>
-                            <li>• Встреча в 14:00</li>
+                            <li>• {t('telegram.summary1')}</li>
+                            <li>• {t('telegram.summary2')}</li>
+                            <li>• {t('telegram.summary3')}</li>
                         </ul>
                      </div>
                   </motion.div>
@@ -83,25 +85,25 @@ export const TelegramSection: React.FC<TelegramSectionProps> = ({ onOpenModal })
                   >
                     <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/5">
                         <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                        <span className="text-green-500 font-bold text-xs uppercase tracking-wide">Новая заявка #482</span>
+                        <span className="text-green-500 font-bold text-xs uppercase tracking-wide">{t('telegram.newLead')}</span>
                     </div>
                     <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                            <span className="text-gray-500">Клиент:</span>
+                            <span className="text-gray-500">{t('telegram.client')}</span>
                             <span className="text-white font-medium">Stroy Invest LLC</span>
                         </div>
                         <div className="flex justify-between">
-                            <span className="text-gray-500">Бюджет:</span>
+                            <span className="text-gray-500">{t('telegram.budget')}</span>
                             <span className="text-white font-medium">15 000 000 UZS</span>
                         </div>
                         <div className="flex justify-between">
-                            <span className="text-gray-500">Телефон:</span>
+                            <span className="text-gray-500">{t('telegram.phone')}</span>
                             <span className="text-blue-400">+998 88 800 05 49</span>
                         </div>
                     </div>
                     <div className="mt-4 grid grid-cols-2 gap-2">
-                       <button className="bg-brand hover:bg-brand-light text-white py-2 rounded-lg text-xs font-medium transition-colors">Принять</button>
-                       <button className="bg-[#3A3A3C] text-white py-2 rounded-lg text-xs font-medium">В CRM</button>
+                       <button type="button" className="bg-brand hover:bg-brand-light text-white py-2 rounded-lg text-xs font-medium transition-colors">{t('telegram.accept')}</button>
+                       <button type="button" className="bg-[#3A3A3C] text-white py-2 rounded-lg text-xs font-medium">{t('telegram.toCrm')}</button>
                     </div>
                   </motion.div>
 
@@ -113,7 +115,7 @@ export const TelegramSection: React.FC<TelegramSectionProps> = ({ onOpenModal })
                       <div className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-white transition-colors">
                          <Paperclip size={20} />
                       </div>
-                      <div className="flex-1 text-gray-500 text-sm">Сообщение...</div>
+                      <div className="flex-1 text-gray-500 text-sm">{t('telegram.placeholder')}</div>
                       <div className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400">
                          <Mic size={20} />
                       </div>
@@ -131,20 +133,19 @@ export const TelegramSection: React.FC<TelegramSectionProps> = ({ onOpenModal })
         {/* Text Content */}
         <div className="flex-1">
           <h2 className="text-4xl md:text-6xl font-bold leading-tight mb-6 text-gray-900">
-            Оповещения и контроль <br/>
-            <span className="text-brand">в Telegram</span>
+            {t('telegram.title1')} <br/>
+            <span className="text-brand">{t('telegram.title2')}</span>
           </h2>
           
           <p className="text-gray-500 text-lg leading-relaxed mb-8">
-            Задачи и сделки живут в Taska, а ключевые оповещения приходят в Telegram. 
-            Руководитель видит картину по бизнесу там, где уже находится команда.
+            {t('telegram.subtitle')}
           </p>
           
           <div className="space-y-6 mb-10">
             {[
-              { title: "Мгновенные алерты", desc: "Новая заявка, просроченная задача или оплата — сразу в Telegram." },
-              { title: "Управление статусами", desc: "Меняйте этапы сделок и статусы задач прямо из чата." },
-              { title: "Краткие отчеты", desc: "Сводка по выручке и задачам в удобном формате по расписанию." }
+              { title: t('telegram.benefit1'), desc: t('telegram.benefit1Desc') },
+              { title: t('telegram.benefit2'), desc: t('telegram.benefit2Desc') },
+              { title: t('telegram.benefit3'), desc: t('telegram.benefit3Desc') },
             ].map((item, idx) => (
               <div key={idx} className="flex gap-4">
                 <div className="mt-1 w-6 h-6 rounded-full bg-brand/10 flex items-center justify-center text-brand shrink-0">
@@ -159,7 +160,7 @@ export const TelegramSection: React.FC<TelegramSectionProps> = ({ onOpenModal })
           </div>
 
           <Button size="md" onClick={onOpenModal}>
-            Настроить оповещения
+            {t('telegram.cta')}
           </Button>
         </div>
 

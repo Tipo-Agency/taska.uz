@@ -3,12 +3,14 @@ import { motion } from 'framer-motion';
 import { Button } from './Button';
 import { ArrowRight, Activity, Zap, BarChart3, Users, Calendar } from 'lucide-react';
 import { trackMetrikaGoal } from '../services/metrics';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface HeroProps {
   onOpenModal: () => void;
 }
 
 export const Hero: React.FC<HeroProps> = ({ onOpenModal }) => {
+  const { t } = useLanguage();
   return (
     <section className="relative min-h-screen flex items-center pt-32 pb-12 overflow-hidden bg-surface-900">
       {/* Dynamic Background */}
@@ -28,8 +30,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenModal }) => {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight mb-8 text-gray-900"
           >
-            Индивидуальные системы <br className="hidden md:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-brand-dark">управления бизнесом</span>
+            {t('hero.title1')} <br className="hidden md:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-brand-dark">{t('hero.title2')}</span>
           </motion.h1>
 
           <motion.p 
@@ -38,8 +40,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenModal }) => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-lg md:text-xl text-gray-500 mb-10 max-w-2xl mx-auto leading-relaxed"
           >
-            Разрабатываем модульные CRM, ERP и Task-менеджеры специально под ваши процессы. 
-            Полный контроль, прозрачность и интеграция с Telegram.
+            {t('hero.subtitle')}
           </motion.p>
 
           <motion.div 
@@ -49,7 +50,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenModal }) => {
             className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto"
           >
             <Button size="md" className="w-full sm:w-auto min-w-[160px]" icon={<ArrowRight size={18} />} onClick={onOpenModal}>
-              Заказать систему
+              {t('hero.orderSystem')}
             </Button>
             <a
               href="https://demo.taska.uz"
@@ -63,7 +64,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenModal }) => {
                 size="md"
                 className="w-full sm:w-auto min-w-[160px]"
               >
-                Демо
+                {t('hero.demo')}
               </Button>
             </a>
           </motion.div>
@@ -98,11 +99,11 @@ export const Hero: React.FC<HeroProps> = ({ onOpenModal }) => {
                      <span className="font-bold text-gray-700">Taska Core</span>
                   </div>
                   {[
-                    { label: "Дашборд", active: true },
-                    { label: "Задачи", active: false },
-                    { label: "Проекты", active: false },
-                    { label: "Финансы", active: false },
-                    { label: "Команда", active: false },
+                    { label: t('hero.ui.dashboard'), active: true },
+                    { label: t('hero.ui.tasks'), active: false },
+                    { label: t('hero.ui.projects'), active: false },
+                    { label: t('hero.ui.finance'), active: false },
+                    { label: t('hero.ui.team'), active: false },
                   ].map((item, i) => (
                     <div key={i} className={`h-9 w-full rounded-lg flex items-center px-3 text-sm font-medium ${item.active ? 'bg-white text-brand shadow-sm border border-gray-100' : 'text-gray-500 hover:bg-gray-100'}`}>
                        {item.label}
@@ -110,7 +111,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenModal }) => {
                   ))}
                   
                   <div className="mt-auto p-4 bg-brand/5 rounded-xl border border-brand/10">
-                    <div className="text-xs font-semibold text-brand mb-1">План продаж</div>
+                    <div className="text-xs font-semibold text-brand mb-1">{t('hero.ui.salesPlan')}</div>
                     <div className="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
                        <div className="bg-brand h-full w-[85%]"></div>
                     </div>
@@ -125,7 +126,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenModal }) => {
                     <div className="h-28 rounded-xl bg-white border border-gray-100 p-4 relative overflow-hidden group shadow-sm hover:shadow-md transition-all">
                        <div className="flex justify-between items-start">
                           <div>
-                            <div className="text-sm text-gray-500 mb-1">Выручка (апр)</div>
+                            <div className="text-sm text-gray-500 mb-1">{t('hero.ui.revenue')}</div>
                             <div className="text-2xl font-bold text-gray-900">42.5M <span className="text-sm font-normal text-gray-400">UZS</span></div>
                           </div>
                           <div className="p-2 bg-green-50 text-green-600 rounded-lg"><BarChart3 size={18}/></div>
@@ -140,8 +141,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenModal }) => {
                     <div className="h-28 rounded-xl bg-white border border-gray-100 p-4 relative overflow-hidden group shadow-sm hover:shadow-md transition-all">
                        <div className="flex justify-between items-start">
                           <div>
-                            <div className="text-sm text-gray-500 mb-1">Задачи</div>
-                            <div className="text-2xl font-bold text-gray-900">12 <span className="text-sm font-normal text-gray-400">в работе</span></div>
+                            <div className="text-sm text-gray-500 mb-1">{t('hero.ui.tasks')}</div>
+                            <div className="text-2xl font-bold text-gray-900">12 <span className="text-sm font-normal text-gray-400">{t('hero.ui.tasksInWork')}</span></div>
                           </div>
                           <div className="p-2 bg-blue-50 text-blue-600 rounded-lg"><Activity size={18}/></div>
                        </div>
@@ -157,7 +158,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenModal }) => {
                     <div className="h-28 rounded-xl bg-white border border-gray-100 p-4 relative overflow-hidden group shadow-sm hover:shadow-md transition-all">
                        <div className="flex justify-between items-start">
                           <div>
-                            <div className="text-sm text-gray-500 mb-1">Эффективность</div>
+                            <div className="text-sm text-gray-500 mb-1">{t('hero.ui.efficiency')}</div>
                             <div className="text-2xl font-bold text-gray-900">98%</div>
                           </div>
                           <div className="p-2 bg-yellow-50 text-yellow-600 rounded-lg"><Zap size={18}/></div>
@@ -175,7 +176,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenModal }) => {
                      {/* Tasks Column */}
                      <div className="flex-1 flex flex-col gap-3 min-w-[200px]">
                         <div className="flex justify-between items-center pb-2 border-b border-gray-200/50">
-                           <span className="font-semibold text-sm text-gray-700">В работе</span>
+                           <span className="font-semibold text-sm text-gray-700">{t('hero.ui.inWork')}</span>
                            <span className="text-xs bg-gray-100 px-2 py-0.5 rounded text-gray-500">4</span>
                         </div>
                         <div className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
@@ -183,14 +184,14 @@ export const Hero: React.FC<HeroProps> = ({ onOpenModal }) => {
                               <span className="px-2 py-0.5 bg-purple-50 text-purple-600 text-[10px] font-bold rounded">DEV</span>
                               <span className="px-2 py-0.5 bg-red-50 text-red-600 text-[10px] font-bold rounded">HIGH</span>
                            </div>
-                           <div className="text-sm font-medium text-gray-800 mb-2">Интеграция Telegram бота</div>
+                           <div className="text-sm font-medium text-gray-800 mb-2">{t('hero.ui.integrationTask')}</div>
                            <div className="flex justify-between items-center mt-2">
                               <Users size={14} className="text-gray-400"/>
-                              <div className="text-[10px] text-gray-400">Сегодня</div>
+                              <div className="text-[10px] text-gray-400">{t('hero.ui.today')}</div>
                            </div>
                         </div>
                         <div className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm opacity-80">
-                           <div className="text-sm font-medium text-gray-800 mb-2">Верстка лендинга</div>
+                           <div className="text-sm font-medium text-gray-800 mb-2">{t('hero.ui.landingTask')}</div>
                            <div className="w-full bg-gray-100 h-1 rounded-full mt-2"><div className="w-1/2 bg-blue-500 h-full rounded-full"></div></div>
                         </div>
                      </div>
@@ -198,7 +199,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenModal }) => {
                      {/* Calendar/Timeline Column - Hidden on small mobile */}
                      <div className="flex-[2] bg-white rounded-xl border border-gray-100 p-4 shadow-sm hidden sm:block">
                         <div className="flex justify-between items-center mb-4">
-                           <h4 className="font-semibold text-sm">График проектов</h4>
+                           <h4 className="font-semibold text-sm">{t('hero.ui.schedule')}</h4>
                            <Calendar size={16} className="text-gray-400"/>
                         </div>
                         <div className="space-y-4">
