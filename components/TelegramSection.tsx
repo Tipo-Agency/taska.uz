@@ -131,20 +131,20 @@ export const TelegramSection: React.FC<TelegramSectionProps> = ({ onOpenModal })
         {/* Text Content */}
         <div className="flex-1">
           <h2 className="text-4xl md:text-6xl font-bold leading-tight mb-6 text-gray-900">
-            Бизнес на кончиках <br/>
-            <span className="text-brand">пальцев</span>
+            Оповещения и контроль <br/>
+            <span className="text-brand">в Telegram</span>
           </h2>
           
           <p className="text-gray-500 text-lg leading-relaxed mb-8">
-            Забудьте о сложных дашбордах, в которые никто не заходит. 
-            Вся операционка теперь живет в Telegram — там, где уже находится ваша команда и клиенты.
+            Задачи и сделки живут в Taska, а ключевые оповещения приходят в Telegram. 
+            Руководитель видит картину по бизнесу там, где уже находится команда.
           </p>
           
           <div className="space-y-6 mb-10">
             {[
-              { title: "Мгновенные алерты", desc: "Узнавайте о продажах быстрее, чем успеете моргнуть." },
-              { title: "Управление статусами", desc: "Меняйте этапы сделок кнопками прямо в чате." },
-              { title: "Финансовые отчеты", desc: "Сводка P&L каждое утро в 9:00 автоматически." }
+              { title: "Мгновенные алерты", desc: "Новая заявка, просроченная задача или оплата — сразу в Telegram." },
+              { title: "Управление статусами", desc: "Меняйте этапы сделок и статусы задач прямо из чата." },
+              { title: "Краткие отчеты", desc: "Сводка по выручке и задачам в удобном формате по расписанию." }
             ].map((item, idx) => (
               <div key={idx} className="flex gap-4">
                 <div className="mt-1 w-6 h-6 rounded-full bg-brand/10 flex items-center justify-center text-brand shrink-0">
@@ -159,7 +159,7 @@ export const TelegramSection: React.FC<TelegramSectionProps> = ({ onOpenModal })
           </div>
 
           <Button size="md" onClick={onOpenModal}>
-            Подключить Telegram Бота
+            Настроить оповещения
           </Button>
         </div>
 

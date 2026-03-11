@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { Features } from './components/Features';
+import { SystemModules } from './components/SystemModules';
 import { ProcessSection } from './components/ProcessSection';
 import { TelegramSection } from './components/TelegramSection';
 import { FAQ } from './components/FAQ';
@@ -27,6 +28,7 @@ const App: React.FC = () => {
       <main>
         <Hero onOpenModal={openModal} />
         <Features />
+        <SystemModules />
 
         {/* Inline CTA after Features */}
         <section className="py-16 bg-white">
@@ -133,7 +135,8 @@ const App: React.FC = () => {
                  <div className="shrink-0 flex flex-col sm:flex-row gap-4">
                    <Button 
                       onClick={openModal} 
-                      className="bg-white !text-brand hover:bg-gray-100 border-none shadow-xl px-8 py-4 text-lg w-full sm:w-auto"
+                      size="md"
+                      className="bg-white !text-brand hover:bg-gray-100 border-none shadow-xl w-full sm:w-auto"
                       icon={<ArrowRight size={20}/>}
                    >
                       Обсудить проект

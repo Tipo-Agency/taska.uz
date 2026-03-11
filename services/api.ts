@@ -85,14 +85,10 @@ export const submitLead = async (leadData: Lead): Promise<boolean> => {
     const cleanedDealData = removeUndefinedFields(dealData);
 
     if (firestore) {
-      // Создаем документ с заранее сгенерированным id,
-      // чтобы записать его и в поле id (rules: allow create, update запрещён)
       const dealsCollection = collection(firestore, "deals");
       const docRef = doc(dealsCollection);
       const payload = { id: docRef.id, ...cleanedDealData };
-
       await setDoc(docRef, payload);
-
       if (process.env.NODE_ENV === "development") {
         console.log("✅ Lead created successfully with ID:", docRef.id);
       }
@@ -100,8 +96,32 @@ export const submitLead = async (leadData: Lead): Promise<boolean> => {
       console.log("Firestore not configured, lead (landing) data:", cleanedDealData);
     }
 
-    // Отмечаем конверсию в Метрике
-    trackMetrikaGoal('lead_submit');
+    // Уведомление в Telegram (если заданы токен и chat_id в .env)
+    const botToken = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
+    const chatId = import.meta.env.VITE_TELEGRAM_CHAT_ID;
+    if (botToken && chatId) {
+      const text = [
+        "🚀 <b>Новая заявка taska.uz</b>",
+        "",
+        `👤 ${name || "—"}`,
+        `📱 ${fullPhone || leadData.contact || "—"}`,
+        leadData.message ? `💬 ${leadData.message}` : "",
+        `📍 ${leadData.source === "modal_form" ? "Модалка" : "Форма внизу"}`,
+      ]
+        .filter(Boolean)
+        .join("\n");
+      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text,
+          parse_mode: "HTML",
+        }),
+      }).catch((err) => console.error("Telegram notify error:", err));
+    }
+
+    trackMetrikaGoal("lead_submit");
     return true;
 
   } catch (error) {

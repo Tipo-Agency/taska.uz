@@ -22,6 +22,8 @@ jobs:
             git fetch origin
             git reset --hard origin/main
             npm install
+            export VITE_TELEGRAM_BOT_TOKEN="${{ secrets.VITE_TELEGRAM_BOT_TOKEN }}"
+            export VITE_TELEGRAM_CHAT_ID="${{ secrets.VITE_TELEGRAM_CHAT_ID }}"
             npm run build
             # Build successful! Files are in dist/
             # Nginx reload (если нужно) настраивается отдельно на сервере.
