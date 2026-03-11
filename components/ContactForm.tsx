@@ -1,40 +1,37 @@
 import React, { useState } from 'react';
 import { Button } from './Button';
 import { motion } from 'framer-motion';
-import { Send, CheckCircle, Smartphone, Clock, LayoutDashboard } from 'lucide-react';
+import { Send, CheckCircle, Smartphone, Clock, LayoutDashboard, Phone } from 'lucide-react';
 import { submitLead } from '../services/api';
-import { formatUzPhone } from '../services/phone';
+import { formatUzPhoneLocal, toFullUzPhone } from '../services/phone';
 import { useLanguage } from '../contexts/LanguageContext';
+
+const TG_URL = 'https://t.me/asdonskikh';
+const PHONE = '+998888000549';
 
 export const ContactForm: React.FC = () => {
   const { t } = useLanguage();
   const [submitted, setSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  // Form states
   const [name, setName] = useState('');
   const [contact, setContact] = useState('');
-  const [message, setMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
+    const fullPhone = toFullUzPhone(contact);
     const success = await submitLead({
       name,
-      contact,
-      message,
+      contact: fullPhone,
+      message: '',
       source: 'footer_form',
       date: new Date().toLocaleString('ru-RU')
     });
-
     if (success) {
       setSubmitted(true);
       setName('');
       setContact('');
-      setMessage('');
     }
-    
     setIsLoading(false);
   };
 
@@ -73,6 +70,17 @@ export const ContactForm: React.FC = () => {
                 {t('contact.freeConsult')}
             </div>
 
+            <div className="flex gap-3 mb-6">
+              <a href={TG_URL} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-gray-200 hover:border-brand/50 hover:bg-brand/5 transition-colors text-gray-700 font-medium text-sm">
+                <Send size={18} className="text-brand" />
+                {t('contact.writeTg')}
+              </a>
+              <a href={`tel:${PHONE.replace(/\s/g, '')}`} className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-gray-200 hover:border-brand/50 hover:bg-brand/5 transition-colors text-gray-700 font-medium text-sm">
+                <Phone size={18} className="text-brand" />
+                {t('contact.call')}
+              </a>
+            </div>
+
             {submitted ? (
               <motion.div 
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -89,43 +97,34 @@ export const ContactForm: React.FC = () => {
                 </Button>
               </motion.div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('contact.discussProject')}</h3>
                   <p className="text-sm text-gray-500">{t('contact.formHint')}</p>
                 </div>
                 
-                <div className="space-y-4">
-                  <div>
-                    <input 
-                      required
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      type="text" 
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-4 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-brand/20 focus:border-brand/50 outline-none transition-all focus:bg-white"
-                      placeholder={t('contact.namePlaceholder')}
-                    />
-                  </div>
-                  <div>
-                    <input 
-                      required
-                      value={contact}
-                      onChange={(e) => setContact(formatUzPhone(e.target.value))}
-                      type="tel" 
-                      inputMode="tel"
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-4 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-brand/20 focus:border-brand/50 outline-none transition-all focus:bg-white"
-                      placeholder={t('contact.phonePlaceholder')}
-                    />
-                  </div>
-                  <div>
-                    <textarea 
-                      rows={3}
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-4 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-brand/20 focus:border-brand/50 outline-none transition-all resize-none focus:bg-white"
-                      placeholder={t('contact.messagePlaceholder')}
-                    />
-                  </div>
+                <div>
+                  <input 
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    type="text" 
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-4 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-brand/20 focus:border-brand/50 outline-none transition-all focus:bg-white"
+                    placeholder={t('contact.namePlaceholder')}
+                  />
+                </div>
+                <div className="flex rounded-xl border border-gray-200 overflow-hidden bg-gray-50 focus-within:ring-2 focus-within:ring-brand/20 focus-within:border-brand/50 focus-within:bg-white">
+                  <span className="flex items-center px-4 bg-gray-100 text-gray-600 border-r border-gray-200 text-base font-medium">+998</span>
+                  <input 
+                    required
+                    value={contact}
+                    onChange={(e) => setContact(formatUzPhoneLocal(e.target.value))}
+                    type="tel" 
+                    inputMode="numeric"
+                    maxLength={12}
+                    className="flex-1 bg-transparent px-5 py-4 text-gray-900 placeholder-gray-400 outline-none min-w-0"
+                    placeholder="90 123 45 67"
+                  />
                 </div>
 
                 <Button 

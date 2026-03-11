@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { X, Send, CheckCircle } from 'lucide-react';
+import { X, Send, CheckCircle, Phone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './Button';
 import { submitLead } from '../services/api';
-import { formatUzPhone } from '../services/phone';
+import { formatUzPhoneLocal, toFullUzPhone } from '../services/phone';
 import { useLanguage } from '../contexts/LanguageContext';
+
+const TG_URL = 'https://t.me/asdonskikh';
+const PHONE = '+998888000549';
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -15,31 +18,25 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
   const { t } = useLanguage();
   const [submitted, setSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  // Form states
   const [name, setName] = useState('');
   const [contact, setContact] = useState('');
-  const [message, setMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
+    const fullPhone = toFullUzPhone(contact);
     const success = await submitLead({
       name,
-      contact,
-      message,
+      contact: fullPhone,
+      message: '',
       source: 'modal_form',
       date: new Date().toLocaleString('ru-RU')
     });
-
     if (success) {
       setSubmitted(true);
       setName('');
       setContact('');
-      setMessage('');
     }
-
     setIsLoading(false);
   };
 
@@ -84,36 +81,42 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
                     <Button onClick={resetForm}>{t('modal.ok')}</Button>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="space-y-5">
-                    <div>
-                      <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('modal.startProject')}</h3>
-                      <p className="text-sm text-gray-500">{t('modal.hint')}</p>
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="flex gap-2">
+                      <a href={TG_URL} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-gray-200 hover:border-brand/50 hover:bg-brand/5 transition-colors text-gray-700 font-medium text-sm">
+                        <Send size={16} className="text-brand" />
+                        {t('contact.writeTg')}
+                      </a>
+                      <a href={`tel:${PHONE.replace(/\s/g, '')}`} className="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-gray-200 hover:border-brand/50 hover:bg-brand/5 transition-colors text-gray-700 font-medium text-sm">
+                        <Phone size={16} className="text-brand" />
+                        {t('contact.call')}
+                      </a>
                     </div>
 
-                    <div className="space-y-4">
-                      <input 
-                        required
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        type="text" 
-                        placeholder={t('modal.namePlaceholder')}
-                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-brand/20 focus:border-brand/50 outline-none transition-all"
-                      />
+                    <div>
+                      <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('modal.startProject')}</h3>
+                      <p className="text-sm text-gray-500 mb-4">{t('modal.hint')}</p>
+                    </div>
+
+                    <input 
+                      required
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      type="text" 
+                      placeholder={t('modal.namePlaceholder')}
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-brand/20 focus:border-brand/50 outline-none transition-all"
+                    />
+                    <div className="flex rounded-xl border border-gray-200 overflow-hidden bg-gray-50 focus-within:ring-2 focus-within:ring-brand/20 focus-within:border-brand/50 focus-within:bg-white">
+                      <span className="flex items-center px-4 bg-gray-100 text-gray-600 border-r border-gray-200 text-sm font-medium">+998</span>
                       <input 
                         required
                         value={contact}
-                        onChange={(e) => setContact(formatUzPhone(e.target.value))}
+                        onChange={(e) => setContact(formatUzPhoneLocal(e.target.value))}
                         type="tel" 
-                        inputMode="tel"
-                        placeholder={t('contact.phonePlaceholder')}
-                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-brand/20 focus:border-brand/50 outline-none transition-all"
-                      />
-                      <textarea 
-                        rows={3}
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        placeholder={t('modal.messagePlaceholder')}
-                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-brand/20 focus:border-brand/50 outline-none transition-all resize-none"
+                        inputMode="numeric"
+                        maxLength={12}
+                        placeholder="90 123 45 67"
+                        className="flex-1 bg-transparent px-4 py-3 text-gray-900 placeholder-gray-400 outline-none min-w-0"
                       />
                     </div>
 
