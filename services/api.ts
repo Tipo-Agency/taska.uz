@@ -103,6 +103,8 @@ async function postDealToTipa(payload: TipaDealCreateBody): Promise<boolean> {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
       mode: 'cors',
+      /** Без кук: иначе nginx на taska.uz может ответить «400 Request Header Or Cookie Too Large». */
+      credentials: 'omit',
     });
 
     if (!res.ok) {
@@ -159,21 +161,30 @@ async function notifyTelegram(leadData: Lead): Promise<boolean> {
   }
 }
 
+export type SubmitLeadResult = {
+  /** Сделка создана в CRM (POST /api/deals → 2xx) */
+  crmOk: boolean;
+  /** Сообщение ушло в Telegram */
+  telegramOk: boolean;
+  /** Хотя бы один канал сработал — можно не ронять UX полностью */
+  ok: boolean;
+};
+
 /**
- * POST `/api/deals` (тот же origin → tipa) или `VITE_LEAD_SUBMIT_URL` + Telegram.
- * Успех, если сработал хотя бы один канал.
+ * POST `/api/deals` (тот же origin → tipa) + Telegram параллельно.
+ * Цель «лид в CRM» — только при `crmOk`; Telegram не подменяет сохранение в БД.
  */
-export const submitLead = async (leadData: Lead): Promise<boolean> => {
+export const submitLead = async (leadData: Lead): Promise<SubmitLeadResult> => {
   try {
     const payload = buildDealPayload(leadData);
-    const [apiOk, tgOk] = await Promise.all([postDealToTipa(payload), notifyTelegram(leadData)]);
-    const ok = apiOk || tgOk;
-    if (ok) {
+    const [crmOk, telegramOk] = await Promise.all([postDealToTipa(payload), notifyTelegram(leadData)]);
+    const ok = crmOk || telegramOk;
+    if (crmOk) {
       trackMetrikaGoal('lead_submit');
     }
-    return ok;
+    return { crmOk, telegramOk, ok };
   } catch (error) {
     console.error('[submitLead]', error);
-    return false;
+    return { crmOk: false, telegramOk: false, ok: false };
   }
 };

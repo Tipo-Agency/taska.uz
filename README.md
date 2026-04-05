@@ -61,6 +61,8 @@ location /api/deals {
 }
 ```
 
+Если nginx отвечает **400 Request Header Or Cookie Too Large**, фронт уже шлёт запрос **без кук** (`credentials: 'omit'`). При необходимости на сервере поднимите буферы, например: `large_client_header_buffers 4 16k;`.
+
 ## Контакты и SEO
 
 Публичные телефон / email / Telegram: **`config/siteContact.ts`**. Поля `telephone` и `sameAs` в JSON-LD в `index.html` держите в синке с этим файлом.

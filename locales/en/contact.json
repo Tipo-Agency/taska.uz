@@ -22,6 +22,10 @@
   "contact.sending": "We send...",
   "contact.successTitle": "Application accepted!",
   "contact.successText": "A Taska manager will contact you at the specified number as soon as possible.",
+  "contact.warnCrmTitle": "Sent to Telegram",
+  "contact.warnCrmText": "CRM is temporarily unavailable (server error). We received your request in Telegram and will get back to you.",
+  "contact.errorTitle": "Could not send",
+  "contact.errorText": "Please try again in a minute or reach us via Telegram / phone.",
   "contact.sendAnother": "Send another one",
   "contact.privacy": "Your data is safe. We do not pass them on to third parties."
 }

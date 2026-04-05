@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from './Button';
 import { motion } from 'framer-motion';
-import { Send, CheckCircle, Smartphone, Clock, LayoutDashboard, Phone } from 'lucide-react';
+import { Send, CheckCircle, Smartphone, Clock, LayoutDashboard, Phone, AlertTriangle, XCircle } from 'lucide-react';
 import { submitLead } from '../services/api';
 import { formatUzPhoneLocal, toFullUzPhone } from '../services/phone';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -10,6 +10,8 @@ import { SITE_CONTACT } from '../config/siteContact';
 export const ContactForm: React.FC = () => {
   const { t } = useLanguage();
   const [submitted, setSubmitted] = useState(false);
+  /** full — в CRM; telegram_only — только TG (прокси /api/deals не сработал) */
+  const [outcome, setOutcome] = useState<'full' | 'telegram_only' | 'error' | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState('');
   const [contact, setContact] = useState('');
@@ -18,17 +20,26 @@ export const ContactForm: React.FC = () => {
     e.preventDefault();
     setIsLoading(true);
     const fullPhone = toFullUzPhone(contact);
-    const success = await submitLead({
+    const result = await submitLead({
       name,
       contact: fullPhone,
       message: '',
       source: 'footer_form',
       date: new Date().toLocaleString('ru-RU'),
     });
-    if (success) {
+    if (result.crmOk) {
+      setOutcome('full');
       setSubmitted(true);
       setName('');
       setContact('');
+    } else if (result.telegramOk) {
+      setOutcome('telegram_only');
+      setSubmitted(true);
+      setName('');
+      setContact('');
+    } else {
+      setOutcome('error');
+      setSubmitted(true);
     }
     setIsLoading(false);
   };
@@ -109,12 +120,38 @@ export const ContactForm: React.FC = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 className="min-h-[380px] flex flex-col items-center justify-center text-center pt-8"
               >
-                <div className="w-20 h-20 bg-emerald-50 rounded-2xl flex items-center justify-center text-brand mb-6 border border-brand/20 shadow-inner">
-                  <CheckCircle size={40} strokeWidth={2} />
-                </div>
-                <h3 className="text-2xl font-bold text-ink mb-2">{t('contact.successTitle')}</h3>
-                <p className="text-ink-muted mb-8 max-w-sm">{t('contact.successText')}</p>
-                <Button variant="outline" onClick={() => setSubmitted(false)}>
+                {outcome === 'full' ? (
+                  <>
+                    <div className="w-20 h-20 bg-emerald-50 rounded-2xl flex items-center justify-center text-brand mb-6 border border-brand/20 shadow-inner">
+                      <CheckCircle size={40} strokeWidth={2} />
+                    </div>
+                    <h3 className="text-2xl font-bold text-ink mb-2">{t('contact.successTitle')}</h3>
+                    <p className="text-ink-muted mb-8 max-w-sm">{t('contact.successText')}</p>
+                  </>
+                ) : outcome === 'telegram_only' ? (
+                  <>
+                    <div className="w-20 h-20 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-700 mb-6 border border-amber-200/80 shadow-inner">
+                      <AlertTriangle size={40} strokeWidth={2} />
+                    </div>
+                    <h3 className="text-2xl font-bold text-ink mb-2">{t('contact.warnCrmTitle')}</h3>
+                    <p className="text-ink-muted mb-8 max-w-sm text-[15px] leading-relaxed">{t('contact.warnCrmText')}</p>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-20 h-20 bg-red-50 rounded-2xl flex items-center justify-center text-red-600 mb-6 border border-red-200/80 shadow-inner">
+                      <XCircle size={40} strokeWidth={2} />
+                    </div>
+                    <h3 className="text-2xl font-bold text-ink mb-2">{t('contact.errorTitle')}</h3>
+                    <p className="text-ink-muted mb-8 max-w-sm text-[15px] leading-relaxed">{t('contact.errorText')}</p>
+                  </>
+                )}
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSubmitted(false);
+                    setOutcome(null);
+                  }}
+                >
                   {t('contact.sendAnother')}
                 </Button>
               </motion.div>
