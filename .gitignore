@@ -4,3 +4,11 @@ dist/
 .env.local
 .env.*.local
 .DS_Store
+locales/.en-translation-cache.json
+
+# Playwright
+/test-results/
+/test-results 2/
+/playwright-report/
+/blob-report/
+.lighthouseci/

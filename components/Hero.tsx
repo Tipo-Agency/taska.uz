@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { ArrowRight, ExternalLink } from 'lucide-react';
 import { Button } from './Button';
-import { ArrowRight, Activity, Zap, BarChart3, Users, Calendar } from 'lucide-react';
+import { HomeHeroTabsVisual } from './HomeHeroTabsVisual';
 import { trackMetrikaGoal } from '../services/metrics';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -12,42 +13,50 @@ interface HeroProps {
 export const Hero: React.FC<HeroProps> = ({ onOpenModal }) => {
   const { t } = useLanguage();
   return (
-    <section className="relative min-h-screen flex items-center pt-32 pb-12 overflow-hidden bg-surface-900">
-      {/* Dynamic Background */}
-      <div className="absolute inset-0 bg-grid-pattern bg-[size:40px_40px] opacity-40 pointer-events-none"></div>
-      <div className="absolute inset-0 bg-radial-glow opacity-60 pointer-events-none"></div>
-      
-      {/* Floating Blobs */}
-      <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-brand/5 blur-[100px] rounded-full animate-pulse"></div>
-      <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-brand/5 blur-[100px] rounded-full"></div>
+    <section className="relative min-h-screen flex flex-col justify-center pt-28 pb-16 md:pb-24 overflow-hidden bg-canvas bg-mesh-canvas">
+      <div className="absolute inset-0 bg-grid-pattern bg-[size:40px_40px] opacity-[0.35] pointer-events-none" />
+      <div className="absolute inset-0 bg-radial-glow opacity-60 pointer-events-none" />
+      <div className="absolute top-1/4 -left-24 w-[420px] h-[420px] bg-emerald-400/14 blur-[100px] rounded-full" />
+      <div className="absolute bottom-0 -right-24 w-[520px] h-[520px] bg-brand/10 blur-[110px] rounded-full" />
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="flex flex-col items-center text-center max-w-5xl mx-auto">
-          
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
+      <div className="container mx-auto px-4 relative z-10 flex flex-col items-center">
+        <div className="max-w-4xl mx-auto text-center mb-6 md:mb-10">
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight mb-8 text-gray-900"
+            className="text-xs font-bold uppercase tracking-[0.2em] text-brand mb-4"
           >
-            {t('hero.title1')} <br className="hidden md:block" />
+            {t('home.hero.kicker')}
+          </motion.p>
+          <motion.h1
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}
+            className="text-4xl md:text-5xl lg:text-6xl font-bold text-ink leading-[1.1] tracking-tight mb-4 md:mb-5"
+          >
+            {t('hero.title1')} <br className="hidden sm:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-brand-dark">{t('hero.title2')}</span>
           </motion.h1>
-
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
+          <motion.div
+            initial={{ opacity: 0, scaleX: 0.6 }}
+            animate={{ opacity: 1, scaleX: 1 }}
+            transition={{ delay: 0.12 }}
+            className="h-1.5 w-20 md:w-28 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 mb-5 md:mb-6 mx-auto"
+            aria-hidden
+          />
+          <motion.p
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-lg md:text-xl text-gray-500 mb-10 max-w-2xl mx-auto leading-relaxed"
+            transition={{ delay: 0.1 }}
+            className="text-lg md:text-xl text-ink-muted leading-relaxed max-w-2xl mx-auto mb-6 md:mb-8"
           >
             {t('hero.subtitle')}
           </motion.p>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto"
+            transition={{ delay: 0.15 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-3"
           >
             <Button size="md" className="w-full sm:w-auto min-w-[160px]" icon={<ArrowRight size={18} />} onClick={onOpenModal}>
               {t('hero.orderSystem')}
@@ -59,174 +68,14 @@ export const Hero: React.FC<HeroProps> = ({ onOpenModal }) => {
               className="w-full sm:w-auto"
               onClick={() => trackMetrikaGoal('demo_click')}
             >
-              <Button
-                variant="secondary"
-                size="md"
-                className="w-full sm:w-auto min-w-[160px]"
-              >
+              <Button variant="secondary" size="md" className="w-full sm:w-auto min-w-[160px] gap-2" icon={<ExternalLink size={18} />}>
                 {t('hero.demo')}
               </Button>
             </a>
           </motion.div>
-
-          {/* Abstract UI Visualization */}
-          <motion.div 
-            initial={{ opacity: 0, rotateX: 20, y: 100 }}
-            animate={{ opacity: 1, rotateX: 0, y: 0 }}
-            transition={{ duration: 1, delay: 0.5, type: "spring" }}
-            className="mt-20 w-full relative perspective-1000"
-          >
-            <div className="relative mx-auto max-w-5xl h-[450px] md:h-[550px] bg-white rounded-t-3xl border border-gray-200 shadow-2xl overflow-hidden flex flex-col">
-              {/* Fake Browser Top */}
-              <div className="h-12 border-b border-gray-100 flex items-center px-4 gap-2 bg-gray-50/80 backdrop-blur-md justify-between">
-                <div className="flex gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-400"></div>
-                </div>
-                <div className="h-6 w-1/3 bg-gray-100 rounded-md flex items-center justify-center text-[10px] text-gray-400 font-mono">
-                   crm.taska.uz/dashboard
-                </div>
-                <div className="w-8 h-8 rounded-full bg-gray-200"></div>
-              </div>
-              
-              {/* Fake UI Body */}
-              <div className="flex-1 p-6 flex gap-6 bg-gray-50/50 overflow-hidden">
-                {/* Sidebar */}
-                <div className="w-16 md:w-56 hidden md:flex flex-col gap-3 shrink-0">
-                  <div className="flex items-center gap-3 px-2 mb-4">
-                     <div className="w-8 h-8 rounded bg-brand flex items-center justify-center text-white font-bold text-xs">T</div>
-                     <span className="font-bold text-gray-700">Taska Core</span>
-                  </div>
-                  {[
-                    { label: t('hero.ui.dashboard'), active: true },
-                    { label: t('hero.ui.tasks'), active: false },
-                    { label: t('hero.ui.projects'), active: false },
-                    { label: t('hero.ui.finance'), active: false },
-                    { label: t('hero.ui.team'), active: false },
-                  ].map((item, i) => (
-                    <div key={i} className={`h-9 w-full rounded-lg flex items-center px-3 text-sm font-medium ${item.active ? 'bg-white text-brand shadow-sm border border-gray-100' : 'text-gray-500 hover:bg-gray-100'}`}>
-                       {item.label}
-                    </div>
-                  ))}
-                  
-                  <div className="mt-auto p-4 bg-brand/5 rounded-xl border border-brand/10">
-                    <div className="text-xs font-semibold text-brand mb-1">{t('hero.ui.salesPlan')}</div>
-                    <div className="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
-                       <div className="bg-brand h-full w-[85%]"></div>
-                    </div>
-                    <div className="text-[10px] text-gray-500 mt-1 text-right">85%</div>
-                  </div>
-                </div>
-                
-                {/* Main Content */}
-                <div className="flex-1 flex flex-col gap-4 min-w-0">
-                   {/* Top Stats Row */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="h-28 rounded-xl bg-white border border-gray-100 p-4 relative overflow-hidden group shadow-sm hover:shadow-md transition-all">
-                       <div className="flex justify-between items-start">
-                          <div>
-                            <div className="text-sm text-gray-500 mb-1">{t('hero.ui.revenue')}</div>
-                            <div className="text-2xl font-bold text-gray-900">42.5M <span className="text-sm font-normal text-gray-400">UZS</span></div>
-                          </div>
-                          <div className="p-2 bg-green-50 text-green-600 rounded-lg"><BarChart3 size={18}/></div>
-                       </div>
-                       <div className="mt-3 flex items-end gap-1 h-8">
-                          {[40, 60, 45, 70, 85, 60, 75].map((h, i) => (
-                             <div key={i} style={{ height: `${h}%` }} className="flex-1 bg-green-100 rounded-t-sm hover:bg-green-200 transition-colors"></div>
-                          ))}
-                       </div>
-                    </div>
-
-                    <div className="h-28 rounded-xl bg-white border border-gray-100 p-4 relative overflow-hidden group shadow-sm hover:shadow-md transition-all">
-                       <div className="flex justify-between items-start">
-                          <div>
-                            <div className="text-sm text-gray-500 mb-1">{t('hero.ui.tasks')}</div>
-                            <div className="text-2xl font-bold text-gray-900">12 <span className="text-sm font-normal text-gray-400">{t('hero.ui.tasksInWork')}</span></div>
-                          </div>
-                          <div className="p-2 bg-blue-50 text-blue-600 rounded-lg"><Activity size={18}/></div>
-                       </div>
-                       <div className="mt-4 flex -space-x-2">
-                          {[1,2,3,4].map(i => (
-                             <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gray-200 flex items-center justify-center text-[10px] text-gray-500 font-bold">
-                                {i === 4 ? '+3' : ''}
-                             </div>
-                          ))}
-                       </div>
-                    </div>
-
-                    <div className="h-28 rounded-xl bg-white border border-gray-100 p-4 relative overflow-hidden group shadow-sm hover:shadow-md transition-all">
-                       <div className="flex justify-between items-start">
-                          <div>
-                            <div className="text-sm text-gray-500 mb-1">{t('hero.ui.efficiency')}</div>
-                            <div className="text-2xl font-bold text-gray-900">98%</div>
-                          </div>
-                          <div className="p-2 bg-yellow-50 text-yellow-600 rounded-lg"><Zap size={18}/></div>
-                       </div>
-                        <div className="mt-4 flex items-center gap-2">
-                           <div className="h-2 flex-1 bg-gray-100 rounded-full overflow-hidden">
-                              <div className="h-full w-[98%] bg-yellow-400"></div>
-                           </div>
-                        </div>
-                    </div>
-                  </div>
-                  
-                  {/* Kanban/Grid Layout */}
-                  <div className="flex-1 flex gap-4 overflow-hidden">
-                     {/* Tasks Column */}
-                     <div className="flex-1 flex flex-col gap-3 min-w-[200px]">
-                        <div className="flex justify-between items-center pb-2 border-b border-gray-200/50">
-                           <span className="font-semibold text-sm text-gray-700">{t('hero.ui.inWork')}</span>
-                           <span className="text-xs bg-gray-100 px-2 py-0.5 rounded text-gray-500">4</span>
-                        </div>
-                        <div className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
-                           <div className="flex gap-2 mb-2">
-                              <span className="px-2 py-0.5 bg-purple-50 text-purple-600 text-[10px] font-bold rounded">DEV</span>
-                              <span className="px-2 py-0.5 bg-red-50 text-red-600 text-[10px] font-bold rounded">HIGH</span>
-                           </div>
-                           <div className="text-sm font-medium text-gray-800 mb-2">{t('hero.ui.integrationTask')}</div>
-                           <div className="flex justify-between items-center mt-2">
-                              <Users size={14} className="text-gray-400"/>
-                              <div className="text-[10px] text-gray-400">{t('hero.ui.today')}</div>
-                           </div>
-                        </div>
-                        <div className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm opacity-80">
-                           <div className="text-sm font-medium text-gray-800 mb-2">{t('hero.ui.landingTask')}</div>
-                           <div className="w-full bg-gray-100 h-1 rounded-full mt-2"><div className="w-1/2 bg-blue-500 h-full rounded-full"></div></div>
-                        </div>
-                     </div>
-
-                     {/* Calendar/Timeline Column - Hidden on small mobile */}
-                     <div className="flex-[2] bg-white rounded-xl border border-gray-100 p-4 shadow-sm hidden sm:block">
-                        <div className="flex justify-between items-center mb-4">
-                           <h4 className="font-semibold text-sm">{t('hero.ui.schedule')}</h4>
-                           <Calendar size={16} className="text-gray-400"/>
-                        </div>
-                        <div className="space-y-4">
-                           {[
-                              { name: 'ERP System Launch', start: 0, w: 60, col: 'bg-brand' },
-                              { name: 'Mobile App Design', start: 30, w: 40, col: 'bg-blue-500' },
-                              { name: 'Marketing Strategy', start: 10, w: 30, col: 'bg-yellow-500' }
-                           ].map((bar, i) => (
-                              <div key={i} className="relative h-8 bg-gray-50 rounded-md flex items-center px-2">
-                                 <div className="absolute top-1 bottom-1 rounded bg-opacity-20 left-0 transition-all" style={{ left: `${bar.start}%`, width: `${bar.w}%`, backgroundColor: bar.col.replace('bg-', '') }}></div>
-                                 <div className={`absolute top-1 bottom-1 rounded opacity-20 ${bar.col}`} style={{ left: `${bar.start}%`, width: `${bar.w}%` }}></div>
-                                 <div className={`absolute top-2 bottom-2 rounded opacity-100 ${bar.col}`} style={{ left: `${bar.start}%`, width: '4px' }}></div>
-                                 <span className="relative z-10 text-[10px] font-medium text-gray-600 ml-1">{bar.name}</span>
-                              </div>
-                           ))}
-                        </div>
-                     </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent pointer-events-none"></div>
-            </div>
-          </motion.div>
-
         </div>
+
+        <HomeHeroTabsVisual />
       </div>
     </section>
   );

@@ -1,0 +1,15 @@
+{
+  "faq.badge": "FAQ",
+  "faq.title": "Frequently asked questions",
+  "faq.subtitle": "Everything you wanted to know about development but were embarrassed to ask.",
+  "faq.q1": "How long does implementation take?",
+  "faq.a1": "We launch the basic version (MVP) in 14 days. This allows you to immediately start working and receiving data. Complete setup of a complex turnkey ERP system usually takes from 1 to 2 months depending on number of modules.",
+  "faq.q2": "Do I need to pay monthly?",
+  "faq.a2": "We are flexible. We can build a system you fully own (one-time payment) and you only pay for hosting (~$10–20/mo). Or we can work on a subscription model with our technical support.",
+  "faq.q3": "Can you integrate with my bank / 1C?",
+  "faq.a3": "Yes, our architecture allows you to connect to any external services via API. We integrate payment systems (Payme, Click), telephony, 1C, MoySklad and other tools.",
+  "faq.q4": "Will I be able to change the settings myself?",
+  "faq.a4": "Certainly. We create a convenient admin panel where you can manage employees, access rights, directories and content without knowledge of code.",
+  "faq.q5": "How does support work?",
+  "faq.a5": "After the project is completed, we provide 1 month of free warranty support. Next, you can enter into a technical support agreement (SLA) so that we monitor the servers and update the system."
+}

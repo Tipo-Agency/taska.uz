@@ -1,0 +1,63 @@
+/**
+ * Глобальные токены и базовая типографика (лендинг без PostCSS Tailwind).
+ * Классы Tailwind расширены в index.html (theme.extend).
+ */
+:root {
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --color-ink: #0f172a;
+  --color-muted: #64748b;
+  --ring-brand: rgba(44, 126, 32, 0.28);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 96px;
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+  background-color: #fafafa;
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background-color: rgba(44, 126, 32, 0.18);
+  color: #0f172a;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring-brand);
+  outline-offset: 2px;
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.text-glow {
+  text-shadow: 0 0 24px rgba(44, 126, 32, 0.22);
+}
+
+/* Скроллбар — спокойнее, без кислотного контраста */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+  border: 2px solid #f1f5f9;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

@@ -1,7 +1,4 @@
-/**
- * UTM Tracking utility
- * Скопировано и упрощено из tipa.uz/lib/utmTracking.ts
- */
+/** Сохранение и подмешивание UTM из query/localStorage в заявки. */
 
 export interface UTMParams {
   utm_source?: string;
@@ -77,7 +74,7 @@ export function getCurrentUTMParams(): UTMParams {
   return getStoredUTMParams() || {};
 }
 
-export function attachUTMToData(data: Record<string, any>): Record<string, any> {
+export function attachUTMToData<T extends Record<string, unknown>>(data: T): T & UTMParams {
   const utm = getCurrentUTMParams();
   return {
     ...data,

@@ -1,0 +1,21 @@
+{
+  "header.home": "Back to homepage",
+  "header.companyLegalLinks": "Documents",
+  "header.nav.modules": "Modules",
+  "header.nav.processes": "Processes",
+  "header.nav.telegram": "Telegram",
+  "header.cta": "To discuss a project",
+  "header.menu.open": "Open Menu",
+  "header.menu.close": "Close menu",
+  "header.startProject": "Start a Project",
+  "header.nav.solutions": "Solutions",
+  "header.nav.modulesMenu": "Modules",
+  "header.demoLogin": "Demo Login",
+  "header.nav.company": "Company",
+  "header.companyDD.work": "Weekly plans, plans and protocols by department",
+  "header.companyDD.cases": "How different industries work in Taska",
+  "header.companyDD.news": "Platform and Implementation Practice Updates",
+  "header.companyDD.education": "System materials and training",
+  "header.companyDD.investors": "Product, metrics and scaling",
+  "header.companyDD.partners": "Integrations and joint projects"
+}

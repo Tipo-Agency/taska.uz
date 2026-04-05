@@ -1,33 +1,61 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Taska.uz
 
-# Run and deploy your AI Studio app
+Маркетинговый сайт и лендинги модулей Taska (React, Vite, TypeScript).
 
-This contains everything you need to run your app locally.
+## Локальный запуск
 
-View your app in AI Studio: https://ai.studio/apps/drive/1Ww4TeBH2MPLNBARl8L7yKD1jkHqlQad6
+- **Node.js** LTS
+- `npm install`
+- Скопируйте `.env.example` → `.env.local`. Лиды по умолчанию уходят на **`POST https://tipa.taska.uz/api/deals`**; при другом хосте задайте **`VITE_LEAD_SUBMIT_URL`**. Опционально: **`VITE_TIPA_FUNNEL_ID`**, Telegram.
+- `npm run dev`
 
-## Run Locally
+## Сборка
 
-**Prerequisites:**  Node.js
+`npm run build` — артефакты в `dist/`. В прод-сборке страницы подгружаются **lazy** (`React.lazy`); лендинги модулей (`/modules/:id`) грузят отдельными чанками; в `vite.config.ts` вынесены **react** / **react-router** / **react-helmet-async**, **framer-motion**, **lucide-react`.
 
-1. Install dependencies:  
-   `npm install`
-2. (Optional) Create [.env.local](.env.local) for any future local env vars.
-3. Run the app:  
-   `npm run dev`
+Переводы: английский разбит на **`locales/en/*.json`** (несколько чанков, параллельная загрузка через **`locales/loadEnglish.ts`**); **`locales/ru.json`** и **`locales/uz.json`** — отдельные чанки при выборе языка. Фоновый **prefetch** возможных локалей по **`navigator.language`** / `navigator.languages` — в **`hooks/useLocaleChunkPrefetch.ts`** (гео/IP не используем: язык интерфейса по-прежнему из `localStorage`).
 
-## Deploy
+Скрипт **`scripts/split-en-json.mjs`** — пересборка `en/*.json` из монолитного `en.json`, если когда-то понадобится снова собрать файл из одного источника.
 
-Автодеплой настроен через GitHub Actions (как в `tipa.uz`).
+После сборки генерируются **PWA**: `manifest.webmanifest`, **`sw.js`** (workbox), регистрация в **`index.tsx`**. Иконка: **`public/pwa-maskable.svg`**.
 
-1. В репозитории на GitHub должны быть заданы Secrets:
-   - `SERVER_HOST` — домен или IP сервера
-   - `SERVER_USER` — пользователь (например, `deploy`)
-   - `SERVER_PATH` — путь до папки проекта на сервере (где лежит git‑репозиторий)
-   - `SERVER_SSH_KEY` — приватный SSH‑ключ
-2. При push в ветку `main` GitHub Action `.github/workflows/deploy.yml`:
-   - заходит по SSH на сервер,
-   - делает `git fetch && git reset --hard origin/main`,
-   - выполняет `npm install` и `npm run build`.
+`npm run typecheck` — проверка TypeScript без эмита.
+
+`npm run lh:ci` — Lighthouse (сбор метрик по **`dist/`**, без жёстких assert; артефакты в **`.lighthouseci/`**).
+
+## CI
+
+Пуш и pull request в `main` запускают **`.github/workflows/ci.yml`**: `npm ci`, `npm audit --omit=dev`, `typecheck`, `build`, Playwright (Chromium).
+
+Отдельно **`.github/workflows/lighthouse.yml`**: сборка и **`npm run lh:ci`** (артефакт с отчётами Lighthouse).
+
+## Тесты E2E
+
+`npm run test:e2e` — Playwright (Chromium), поднимает `npm run dev` на порту 3000. Сценарии: формы лида, смена **`<title>`** `/` ↔ `/login`, переключение языков **RU → UZ → EN → RU** (`header-lang-trigger`). UI-режим: `npm run test:e2e:ui`.
+
+Первый запуск: `npx playwright install chromium`.
+
+## SEO (SPA)
+
+`<title>`, `meta description`, canonical, **og:image** (`{VITE_SITE_ORIGIN}/og-image.jpg`) и Twitter Card задаются в **`components/SeoHead.tsx`** через **react-helmet-async**; текст по маршруту собирает **`config/resolvePageSeo.ts`** (переводы `seo.*` + заголовки страниц). Канонический URL: **`VITE_SITE_ORIGIN`** (по умолчанию `https://taska.uz`) или `https://taska.uz` из `resolvePageSeo.ts`.
+
+Статический `index.html` остаётся стартовым для краулеров без JS; после гидрации мета обновляется под роут и язык.
+
+## Деплой
+
+В GitHub задайте Secrets для workflow `.github/workflows/deploy.yml`: `SERVER_HOST`, `SERVER_USER`, `SERVER_PATH`, `SERVER_SSH_KEY`. Пуш в `main` выполняет pull на сервере и сборку.
+
+На nginx для hashed-ассетов из `dist/assets/` имеет смысл длинный кэш (`immutable`, `max-age` год) и **HTTP/2**; **push** по сути снят с повестки в пользу **preload/prefetch** из HTML (у нас prefetch локалей делается из JS). Для растровых баннеров позже можно добавить **AVIF/WebP** в `<picture>` — сейчас в логотипах партнёров в основном SVG.
+
+## Контакты и SEO
+
+Публичные телефон / email / Telegram: **`config/siteContact.ts`**. Поля `telephone` и `sameAs` в JSON-LD в `index.html` держите в синке с этим файлом.
+
+## Заявки (лиды)
+
+`services/api.ts` → **`submitLead`**:
+
+1. **`POST {base}/api/deals`** — по умолчанию **`https://tipa.taska.uz/api/deals`**. Тело JSON (camelCase), как **create_deal**: минимум `title`, `contactName`, `notes`, `source` (`taska.uz`), `stage` (`new`); при необходимости `amount`, `currency`, `funnelId` (через `VITE_TIPA_FUNNEL_ID`). UTM из браузера добавляются в текст **`notes`**. Заголовок: **`Content-Type: application/json`**. **Authorization / API-key для этой ручки не используются.**
+2. Параллельно — **Telegram**, если заданы `VITE_TELEGRAM_BOT_TOKEN` и `VITE_TELEGRAM_CHAT_ID`.
+
+Запрос с фронта `taska.uz` в браузере требует **CORS** на tipa: в `.env` API, например `CORS_ORIGINS=…,https://taska.uz,https://www.taska.uz`.

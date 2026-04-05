@@ -1,131 +1,158 @@
-import { collection, doc, setDoc, serverTimestamp } from "firebase/firestore"; 
-import { db } from "../firebase";
-import { Lead } from "../types";
-import { trackMetrikaGoal } from "./metrics";
-import { attachUTMToData } from "./utmTracking";
+import type { Lead } from '../types';
+import { trackMetrikaGoal } from './metrics';
+import { getCurrentUTMParams } from './utmTracking';
 
-const FUNNEL_ID = "funnel-1767550287550";
+/** Публичный приём заявок как сделок: POST {base}/api/deals */
+const DEFAULT_DEALS_URL = 'https://tipa.taska.uz/api/deals';
 
-const getFirestore = () => {
-  if (!db) {
-    console.error("❌ Firestore is not initialized. Check firebase.ts configuration.");
-    return null;
-  }
-  return db;
-};
+const dealsUrl = () => import.meta.env.VITE_LEAD_SUBMIT_URL?.trim() || DEFAULT_DEALS_URL;
 
-function removeUndefinedFields<T extends Record<string, any>>(obj: T): Partial<T> {
-  const cleaned: any = {};
-  for (const key in obj) {
-    if (obj[key] !== undefined) {
-      cleaned[key] = obj[key];
-    }
-  }
-  return cleaned;
+/** Опционально: ID воронки CRM на tipa (если задан в .env) */
+const funnelIdFromEnv = () => import.meta.env.VITE_TIPA_FUNNEL_ID?.trim() || '';
+
+/**
+ * Тело POST /api/deals (camelCase, как create_deal на tipa.taska.uz).
+ * @see README — раздел «Заявки»
+ */
+export interface TipaDealCreateBody {
+  title: string;
+  contactName: string;
+  notes: string;
+  /** До ~50 симв., например website / taska.uz */
+  source: string;
+  stage: string;
+  funnelId?: string;
+  amount?: number;
+  currency?: string;
 }
 
+function buildPhoneLines(rawContact: string): { display: string; compact: string } {
+  const raw = rawContact.trim();
+  if (!raw) return { display: '', compact: '' };
+  if (raw.startsWith('+')) {
+    const parts = raw.split(/\s+/);
+    const cc = parts[0];
+    const local = parts.slice(1).join(' ') || raw.slice(cc.length).trim();
+    const display = `${cc} ${local}`.trim();
+    const compact = `${cc}${local.replace(/\s/g, '')}`;
+    return { display, compact };
+  }
+  return { display: raw, compact: raw.replace(/\s/g, '') };
+}
+
+function buildNotes(leadData: Lead, phoneDisplay: string): string {
+  const lines: string[] = [];
+  if (phoneDisplay) lines.push(`Телефон: ${phoneDisplay}`);
+  if (leadData.message?.trim()) lines.push(`Сообщение: ${leadData.message.trim()}`);
+  lines.push(`Форма: ${leadData.source === 'modal_form' ? 'модальное окно' : 'форма внизу страницы'}`);
+
+  const utm = getCurrentUTMParams();
+  const utmPairs = Object.entries(utm).filter(([, v]) => Boolean(v?.trim?.()));
+  if (utmPairs.length > 0) {
+    lines.push(`UTM: ${utmPairs.map(([k, v]) => `${k}=${v}`).join(', ')}`);
+  }
+  return lines.join('\n');
+}
+
+function buildDealPayload(leadData: Lead): TipaDealCreateBody {
+  const name = (leadData.name || '').trim();
+  const { display: phoneDisplay } = buildPhoneLines(leadData.contact || '');
+
+  const payload: TipaDealCreateBody = {
+    title: name ? `Заявка с сайта: ${name}` : 'Заявка с сайта taska.uz',
+    contactName: name || '—',
+    notes: buildNotes(leadData, phoneDisplay),
+    source: 'taska.uz',
+    stage: 'new',
+    amount: 0,
+    currency: 'UZS',
+  };
+
+  const fid = funnelIdFromEnv();
+  if (fid) payload.funnelId = fid;
+
+  return payload;
+}
+
+async function postDealToTipa(payload: TipaDealCreateBody): Promise<boolean> {
+  const url = dealsUrl();
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      mode: 'cors',
+    });
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => '');
+      console.error('[submitLead] POST /api/deals', res.status, text);
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.error('[submitLead] /api/deals', error);
+    return false;
+  }
+}
+
+async function notifyTelegram(leadData: Lead): Promise<boolean> {
+  const botToken = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
+  const chatId = import.meta.env.VITE_TELEGRAM_CHAT_ID;
+  if (!botToken || !chatId) {
+    return false;
+  }
+
+  const name = (leadData.name || '').trim();
+  const { compact: fullPhone } = buildPhoneLines(leadData.contact || '');
+
+  const text = [
+    '<b>Новая заявка taska.uz</b>',
+    '',
+    `<b>Имя:</b> ${name || '—'}`,
+    `<b>Телефон:</b> ${fullPhone || leadData.contact || '—'}`,
+    leadData.message ? `<b>Сообщение:</b> ${leadData.message}` : '',
+    `<b>Источник:</b> ${leadData.source === 'modal_form' ? 'модальное окно' : 'форма на странице'}`,
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text,
+        parse_mode: 'HTML',
+      }),
+    });
+    if (!res.ok && import.meta.env.DEV) {
+      const errText = await res.text().catch(() => '');
+      console.error('[submitLead] Telegram:', res.status, errText);
+    }
+    return res.ok;
+  } catch (error) {
+    if (import.meta.env.DEV) console.error('[submitLead] Telegram:', error);
+    return false;
+  }
+}
+
+/**
+ * POST https://tipa.taska.uz/api/deals (или `VITE_LEAD_SUBMIT_URL`) + Telegram.
+ * Успех, если сработал хотя бы один канал.
+ */
 export const submitLead = async (leadData: Lead): Promise<boolean> => {
   try {
-    const firestore = getFirestore();
-
-    // Маппим простую форму (name, contact, message, source)
-    // в структуру, похожую на tipa.uz LeadData
-    const name = (leadData.name || "").trim();
-    const [firstName, ...restName] = name.split(/\s+/);
-    const lastName = restName.join(" ") || "";
-
-    const rawContact = (leadData.contact || "").trim();
-    let phoneCountryCode = "";
-    let phoneLocal = rawContact;
-
-    if (rawContact.startsWith("+")) {
-      const parts = rawContact.split(/\s+/);
-      phoneCountryCode = parts[0];
-      phoneLocal = parts.slice(1).join(" ") || rawContact.slice(phoneCountryCode.length).trim();
+    const payload = buildDealPayload(leadData);
+    const [apiOk, tgOk] = await Promise.all([postDealToTipa(payload), notifyTelegram(leadData)]);
+    const ok = apiOk || tgOk;
+    if (ok) {
+      trackMetrikaGoal('lead_submit');
     }
-
-    const baseData: Record<string, any> = {
-      firstName: firstName || leadData.name,
-      lastName: lastName || undefined,
-      phone: phoneLocal,
-      phoneCountryCode: phoneCountryCode || undefined,
-      task: leadData.message || undefined,
-      sourceSection: leadData.source,
-    };
-
-    const dataWithUTM = attachUTMToData(baseData);
-
-    const fullPhone = (phoneCountryCode ? phoneCountryCode + " " : "") + phoneLocal.replace(/\s/g, "");
-
-    const timestamp = serverTimestamp();
-
-    const dealData: any = {
-      ...dataWithUTM,
-      // tipa.uz-like structure
-      amount: 0,
-      assigneeId: "",
-      contactName: name || leadData.name,
-      currency: "UZS",
-      funnelId: FUNNEL_ID,
-      isArchived: false,
-      notes: `Раздел сайта: ${leadData.source}${
-        fullPhone ? ` Телефон: ${fullPhone}` : ""
-      }${leadData.message ? ` Задача: ${leadData.message}` : ""}`,
-      phone: fullPhone,
-      source: "site",
-      sourceSection: leadData.source,
-      stage: "new",
-      status: "new",
-      task: leadData.message || undefined,
-      title: `Заявка с сайта: ${firstName || leadData.name || "Без имени"}`,
-      createdAt: timestamp,
-      updatedAt: timestamp,
-    };
-
-    const cleanedDealData = removeUndefinedFields(dealData);
-
-    if (firestore) {
-      const dealsCollection = collection(firestore, "deals");
-      const docRef = doc(dealsCollection);
-      const payload = { id: docRef.id, ...cleanedDealData };
-      await setDoc(docRef, payload);
-      if (process.env.NODE_ENV === "development") {
-        console.log("✅ Lead created successfully with ID:", docRef.id);
-      }
-    } else {
-      console.log("Firestore not configured, lead (landing) data:", cleanedDealData);
-    }
-
-    // Уведомление в Telegram (если заданы токен и chat_id в .env)
-    const botToken = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
-    const chatId = import.meta.env.VITE_TELEGRAM_CHAT_ID;
-    if (botToken && chatId) {
-      const text = [
-        "🚀 <b>Новая заявка taska.uz</b>",
-        "",
-        `👤 ${name || "—"}`,
-        `📱 ${fullPhone || leadData.contact || "—"}`,
-        leadData.message ? `💬 ${leadData.message}` : "",
-        `📍 ${leadData.source === "modal_form" ? "Модалка" : "Форма внизу"}`,
-      ]
-        .filter(Boolean)
-        .join("\n");
-      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text,
-          parse_mode: "HTML",
-        }),
-      }).catch((err) => console.error("Telegram notify error:", err));
-    }
-
-    trackMetrikaGoal("lead_submit");
-    return true;
-
+    return ok;
   } catch (error) {
-    console.error("Error submitting form:", error);
+    console.error('[submitLead]', error);
     return false;
   }
 };

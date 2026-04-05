@@ -1,0 +1,23 @@
+{
+  "process.title1": "Draw the processes",
+  "process.title2": "and the system will fulfill them",
+  "process.subtitle": "Taska has a built-in visual business process editor. You build logic with arrows, like on a board, and the system automatically sets tasks, sends messages and controls deadlines.",
+  "process.noCode": "Without programmers",
+  "process.noCodeDesc": "Drag-and-drop interface is understandable to any manager.",
+  "process.autoActions": "Automatic actions",
+  "process.autoActionsDesc": "The system itself will send the invoice, remind the client and create a task.",
+  "process.bottlenecks": "Finding bottlenecks",
+  "process.bottlenecksDesc": "You can see at what stage the deals get stuck.",
+  "process.action": "Action",
+  "process.condition": "Condition",
+  "process.send": "Dispatch",
+  "process.trigger": "Trigger",
+  "process.newLead": "New application",
+  "process.check": "Examination",
+  "process.budgetCheck": "Budget > $1000?",
+  "process.yes": "Yes",
+  "process.no": "No",
+  "process.task": "Task",
+  "process.assignVip": "Appoint a VIP manager",
+  "process.autoPresentation": "Auto-presentation"
+}

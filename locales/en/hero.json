@@ -1,0 +1,21 @@
+{
+  "hero.title1": "Customized systems",
+  "hero.title2": "business management",
+  "hero.subtitle": "We develop modular CRM, ERP and Task managers specifically for your processes. Full control, transparency and integration with Telegram.",
+  "hero.orderSystem": "Order a system",
+  "hero.demo": "Demo",
+  "hero.ui.dashboard": "Dashboard",
+  "hero.ui.tasks": "Tasks",
+  "hero.ui.projects": "Projects",
+  "hero.ui.finance": "Finance",
+  "hero.ui.team": "Team",
+  "hero.ui.salesPlan": "Sales plan",
+  "hero.ui.revenue": "Revenue (Apr)",
+  "hero.ui.tasksInWork": "at work",
+  "hero.ui.efficiency": "Efficiency",
+  "hero.ui.inWork": "In progress",
+  "hero.ui.integrationTask": "Telegram bot integration",
+  "hero.ui.today": "Today",
+  "hero.ui.landingTask": "Landing page layout",
+  "hero.ui.schedule": "Project schedule"
+}

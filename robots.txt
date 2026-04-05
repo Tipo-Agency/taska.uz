@@ -1,7 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /admin
-Disallow: /private
-Host: https://taska.uz
-
-Sitemap: https://taska.uz/sitemap.xml

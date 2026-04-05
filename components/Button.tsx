@@ -16,12 +16,16 @@ export const Button: React.FC<ButtonProps> = ({
   icon,
   ...props 
 }) => {
-  const baseStyles = "inline-flex items-center justify-center rounded-xl font-semibold transition-all duration-300 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed";
+  const baseStyles =
+    "inline-flex items-center justify-center rounded-xl font-semibold transition-all duration-200 ease-out-expo focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/35 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100";
   
   const variants = {
-    primary: "bg-brand hover:bg-brand-dark text-white shadow-[0_4px_14px_rgba(44,126,32,0.3)] hover:shadow-[0_6px_20px_rgba(44,126,32,0.4)] border border-transparent active:scale-[0.98]",
-    secondary: "bg-white text-gray-800 hover:bg-gray-50 shadow-md hover:shadow-lg border border-gray-100 active:scale-[0.98]",
-    outline: "bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 active:scale-[0.98]",
+    primary:
+      "bg-brand hover:bg-brand-dark text-white shadow-glow hover:shadow-[0_10px_36px_-6px_rgba(44,126,32,0.35)] border border-transparent hover:-translate-y-px active:translate-y-0 active:scale-[0.99]",
+    secondary:
+      "bg-canvas-elevated text-ink hover:bg-white shadow-soft hover:shadow-soft-lg border border-slate-200/90 hover:border-slate-300/80 active:scale-[0.99]",
+    outline:
+      "bg-transparent border border-slate-300/90 text-ink-muted hover:bg-slate-50 hover:border-slate-400/60 active:scale-[0.99]",
   };
 
   const sizes = {
@@ -32,8 +36,9 @@ export const Button: React.FC<ButtonProps> = ({
 
   return (
     <motion.button
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ scale: 1.01 }}
+      whileTap={{ scale: 0.99 }}
+      transition={{ type: 'spring', stiffness: 500, damping: 28 }}
       className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
       {...props}
     >

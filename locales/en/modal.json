@@ -1,0 +1,12 @@
+{
+  "modal.startProject": "Start a Project",
+  "modal.hint": "Tell us a little about the problem and we will offer a solution.",
+  "modal.namePlaceholder": "your name",
+  "modal.messagePlaceholder": "What problem needs to be solved? (for example: sales department automation)",
+  "modal.submit": "Send a request",
+  "modal.sending": "Sending...",
+  "modal.successTitle": "Application sent!",
+  "modal.successText": "We will contact you at the specified number as soon as possible.",
+  "modal.ok": "Great",
+  "modal.privacy": "By clicking the button, you agree to the privacy policy."
+}
