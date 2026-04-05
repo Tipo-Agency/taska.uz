@@ -11,7 +11,9 @@
 
 ## Сборка
 
-`npm run build` — артефакты в `dist/`. В прод-сборке страницы подгружаются **lazy** (`React.lazy`); лендинги модулей (`/modules/:id`) грузят отдельными чанками; в `vite.config.ts` вынесены **react** / **react-router** / **react-helmet-async**, **framer-motion**, **lucide-react`.
+`npm run build` — артефакты в `dist/`. **Tailwind CSS** через **PostCSS** (`tailwind.config.js`, `postcss.config.js`, `./index.css` в `index.tsx`), без CDN.
+
+В прод-сборке страницы подгружаются **lazy** (`React.lazy`); лендинги модулей (`/modules/:id`) грузят отдельными чанками; в `vite.config.ts` вынесены **react** / **react-router** / **react-helmet-async**, **framer-motion**, **lucide-react`.
 
 Переводы: английский разбит на **`locales/en/*.json`** (несколько чанков, параллельная загрузка через **`locales/loadEnglish.ts`**); **`locales/ru.json`** и **`locales/uz.json`** — отдельные чанки при выборе языка. Фоновый **prefetch** возможных локалей по **`navigator.language`** / `navigator.languages` — в **`hooks/useLocaleChunkPrefetch.ts`** (гео/IP не используем: язык интерфейса по-прежнему из `localStorage`).
 
@@ -64,13 +66,15 @@ large_client_header_buffers 4 32k;
 location /api/deals {
     proxy_pass https://tipa.taska.uz/api/deals;
     proxy_http_version 1.1;
+    proxy_ssl_server_name on;
     proxy_set_header Host tipa.taska.uz;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
-    proxy_set_header Content-Type $http_content_type;
 }
 ```
+
+**Критично:** не ставьте **`proxy_set_header Host $host`**. Тогда на tipa уходит `Host: taska.uz`, виртуальный хост на `tipa.taska.uz` отвечает **400** и лиды не создаются. Нужен именно **`Host tipa.taska.uz`** (как в примере выше).
 
 ## Контакты и SEO
 
