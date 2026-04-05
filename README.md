@@ -6,7 +6,7 @@
 
 - **Node.js** LTS
 - `npm install`
-- Скопируйте `.env.example` → `.env.local`. Лиды по умолчанию: **`POST /api/deals`** (тот же origin). Локально Vite проксирует на tipa; в проде нужен **nginx** (см. ниже). Опционально: **`VITE_LEAD_SUBMIT_URL`**, **`VITE_TIPA_FUNNEL_ID`**, Telegram.
+- Скопируйте `.env.example` → `.env.local`. Лиды по умолчанию: **`POST /api/deals`** (тот же origin). Локально Vite проксирует на tipa; в проде нужен **nginx** (см. ниже). Опционально: **`VITE_LEAD_SUBMIT_URL`**, **`VITE_TIPA_FUNNEL_ID`**, **`VITE_TIPA_SOURCE_ID`** (UUID из tipa), Telegram.
 - `npm run dev`
 
 ## Сборка
@@ -69,7 +69,7 @@ location /api/deals {
 
 `services/api.ts` → **`submitLead`**:
 
-1. **`POST /api/deals`** на **том же origin**, nginx проксирует на **`https://tipa.taska.uz/api/deals`**. Тело JSON (camelCase), как **create_deal**: минимум `title`, `contactName`, `notes`, `source` (`taska.uz`), `stage` (`new`); при необходимости `amount`, `currency`, `funnelId` (через `VITE_TIPA_FUNNEL_ID`). UTM из браузера добавляются в текст **`notes`**. Заголовок: **`Content-Type: application/json`**. **Authorization / API-key для этой ручки не используются.**
+1. **`POST /api/deals`** на **том же origin**, nginx проксирует на **`https://tipa.taska.uz/api/deals`**. Тело JSON (camelCase): `title`, `contactName`, `phone` / `contactPhone` (номер с сайта, иначе в CRM пусто в поле контакта), `notes`, `source` (`taska.uz`), `stage` (`new`); опционально `funnelId` и `sourceId` (**`VITE_TIPA_FUNNEL_ID`** / **`VITE_TIPA_SOURCE_ID`** в `.env` при сборке — UUID из админки tipa, иначе выпадающие «Воронка» и «Источник» остаются пустыми). UTM в **`notes`**. **`Content-Type: application/json`**. **Без Authorization.**
 2. Параллельно — **Telegram**, если заданы `VITE_TELEGRAM_BOT_TOKEN` и `VITE_TELEGRAM_CHAT_ID`.
 
 Прямой запрос из браузера на `tipa.taska.uz` без прокси не проходит из‑за **CORS**; альтернатива — настроить `Access-Control-Allow-Origin` на стороне tipa (менее удобно, чем прокси на nginx).

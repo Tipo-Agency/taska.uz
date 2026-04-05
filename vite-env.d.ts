@@ -10,6 +10,8 @@ interface ImportMetaEnv {
   readonly VITE_LEAD_SUBMIT_URL?: string;
   /** Опционально: funnelId для CRM на tipa */
   readonly VITE_TIPA_FUNNEL_ID?: string;
+  /** Опционально: UUID источника лида в справочнике tipa */
+  readonly VITE_TIPA_SOURCE_ID?: string;
   readonly VITE_TELEGRAM_BOT_TOKEN?: string;
   readonly VITE_TELEGRAM_CHAT_ID?: string;
 }

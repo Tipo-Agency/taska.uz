@@ -11,11 +11,13 @@ const DEFAULT_DEALS_URL = '/api/deals';
 
 const dealsUrl = () => import.meta.env.VITE_LEAD_SUBMIT_URL?.trim() || DEFAULT_DEALS_URL;
 
-/** Опционально: ID воронки CRM на tipa (если задан в .env) */
+/** Опционально: ID воронки / источника в CRM tipa (задаются в .env при сборке) */
 const funnelIdFromEnv = () => import.meta.env.VITE_TIPA_FUNNEL_ID?.trim() || '';
+const sourceIdFromEnv = () => import.meta.env.VITE_TIPA_SOURCE_ID?.trim() || '';
 
 /**
  * Тело POST /api/deals (camelCase, как create_deal на tipa.taska.uz).
+ * Телефон дублируем в `phone` / `contactPhone` — в интерфейсе CRM подставляются в поля контакта, не только в «Примечание».
  * @see README — раздел «Заявки»
  */
 export interface TipaDealCreateBody {
@@ -26,6 +28,12 @@ export interface TipaDealCreateBody {
   source: string;
   stage: string;
   funnelId?: string;
+  /** UUID справочника «Источник» в tipa (если задан VITE_TIPA_SOURCE_ID) */
+  sourceId?: string;
+  /** Номер в компактном виде (+998…) для подстановки в карточку сделки */
+  phone?: string;
+  /** Алиас для бэкендов, которые ожидают именно это имя поля */
+  contactPhone?: string;
   amount?: number;
   currency?: string;
 }
@@ -60,7 +68,8 @@ function buildNotes(leadData: Lead, phoneDisplay: string): string {
 
 function buildDealPayload(leadData: Lead): TipaDealCreateBody {
   const name = (leadData.name || '').trim();
-  const { display: phoneDisplay } = buildPhoneLines(leadData.contact || '');
+  const { display: phoneDisplay, compact: phoneCompact } = buildPhoneLines(leadData.contact || '');
+  const phone = phoneCompact || phoneDisplay || undefined;
 
   const payload: TipaDealCreateBody = {
     title: name ? `Заявка с сайта: ${name}` : 'Заявка с сайта taska.uz',
@@ -72,8 +81,16 @@ function buildDealPayload(leadData: Lead): TipaDealCreateBody {
     currency: 'UZS',
   };
 
+  if (phone) {
+    payload.phone = phone;
+    payload.contactPhone = phone;
+  }
+
   const fid = funnelIdFromEnv();
   if (fid) payload.funnelId = fid;
+
+  const sid = sourceIdFromEnv();
+  if (sid) payload.sourceId = sid;
 
   return payload;
 }
