@@ -109,12 +109,16 @@ async function postDealToTipa(payload: TipaDealCreateBody): Promise<boolean> {
 
     if (!res.ok) {
       const text = await res.text().catch(() => '');
-      console.error('[submitLead] POST /api/deals', res.status, text);
+      if (import.meta.env.DEV) {
+        console.error('[submitLead] POST /api/deals', res.status, text);
+      } else {
+        console.error('[submitLead] POST /api/deals', res.status);
+      }
       return false;
     }
     return true;
   } catch (error) {
-    console.error('[submitLead] /api/deals', error);
+    if (import.meta.env.DEV) console.error('[submitLead] /api/deals', error);
     return false;
   }
 }
@@ -172,14 +176,14 @@ export type SubmitLeadResult = {
 
 /**
  * POST `/api/deals` (тот же origin → tipa) + Telegram параллельно.
- * Цель «лид в CRM» — только при `crmOk`; Telegram не подменяет сохранение в БД.
+ * `crmOk` / `telegramOk` — для отладки; пользователю показываем один сценарий успеха при `ok`.
  */
 export const submitLead = async (leadData: Lead): Promise<SubmitLeadResult> => {
   try {
     const payload = buildDealPayload(leadData);
     const [crmOk, telegramOk] = await Promise.all([postDealToTipa(payload), notifyTelegram(leadData)]);
     const ok = crmOk || telegramOk;
-    if (crmOk) {
+    if (ok) {
       trackMetrikaGoal('lead_submit');
     }
     return { crmOk, telegramOk, ok };

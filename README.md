@@ -47,7 +47,18 @@
 
 На nginx для hashed-ассетов из `dist/assets/` имеет смысл длинный кэш (`immutable`, `max-age` год) и **HTTP/2**; **push** по сути снят с повестки в пользу **preload/prefetch** из HTML (у нас prefetch локалей делается из JS). Для растровых баннеров позже можно добавить **AVIF/WebP** в `<picture>` — сейчас в логотипах партнёров в основном SVG.
 
-**Прокси заявок в CRM (обязательно в проде):** фронт шлёт **`POST /api/deals`** на тот же хост (`taska.uz`), иначе браузер блокирует прямой запрос на `tipa.taska.uz` (CORS). Пример локации:
+**Прокси заявок в CRM (обязательно в проде):** фронт шлёт **`POST /api/deals`** на тот же хост (`taska.uz`), иначе браузер блокирует прямой запрос на `tipa.taska.uz` (CORS).
+
+Если nginx отвечает **400 Request Header Or Cookie Too Large**, в блоке **`server { ... }`** для `taska.uz` (или в `http { }`) **обязательно** увеличьте буферы под большие Cookie от метрики/рекламы — иначе запрос не дойдёт до прокси:
+
+```nginx
+client_header_buffer_size 16k;
+large_client_header_buffers 4 32k;
+```
+
+Фронт шлёт **`credentials: 'omit'`**, но заголовки от браузера всё равно могут быть тяжёлыми — без строк выше CRM может не получать лиды.
+
+Пример **`location`**:
 
 ```nginx
 location /api/deals {
@@ -60,8 +71,6 @@ location /api/deals {
     proxy_set_header Content-Type $http_content_type;
 }
 ```
-
-Если nginx отвечает **400 Request Header Or Cookie Too Large**, фронт уже шлёт запрос **без кук** (`credentials: 'omit'`). При необходимости на сервере поднимите буферы, например: `large_client_header_buffers 4 16k;`.
 
 ## Контакты и SEO
 

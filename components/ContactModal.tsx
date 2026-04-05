@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Send, CheckCircle, Phone, AlertTriangle, XCircle } from 'lucide-react';
+import { X, Send, CheckCircle, Phone, XCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './Button';
 import { submitLead } from '../services/api';
@@ -15,7 +15,7 @@ interface ContactModalProps {
 export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
   const { t } = useLanguage();
   const [submitted, setSubmitted] = useState(false);
-  const [outcome, setOutcome] = useState<'full' | 'telegram_only' | 'error' | null>(null);
+  const [outcome, setOutcome] = useState<'success' | 'error' | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState('');
   const [contact, setContact] = useState('');
@@ -31,13 +31,8 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
       source: 'modal_form',
       date: new Date().toLocaleString('ru-RU'),
     });
-    if (result.crmOk) {
-      setOutcome('full');
-      setSubmitted(true);
-      setName('');
-      setContact('');
-    } else if (result.telegramOk) {
-      setOutcome('telegram_only');
+    if (result.ok) {
+      setOutcome('success');
       setSubmitted(true);
       setName('');
       setContact('');
@@ -82,21 +77,13 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
               <div className="p-8">
                 {submitted ? (
                   <div className="flex flex-col items-center justify-center text-center py-10">
-                    {outcome === 'full' ? (
+                    {outcome === 'success' ? (
                       <>
                         <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center text-brand mb-4">
                           <CheckCircle size={32} />
                         </div>
                         <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('modal.successTitle')}</h3>
                         <p className="text-gray-500 mb-6">{t('modal.successText')}</p>
-                      </>
-                    ) : outcome === 'telegram_only' ? (
-                      <>
-                        <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center text-amber-700 mb-4 border border-amber-200/80">
-                          <AlertTriangle size={32} />
-                        </div>
-                        <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('contact.warnCrmTitle')}</h3>
-                        <p className="text-gray-500 mb-6 text-sm leading-relaxed max-w-sm">{t('contact.warnCrmText')}</p>
                       </>
                     ) : (
                       <>

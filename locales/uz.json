@@ -1448,8 +1448,6 @@
   "contact.sending": "Yuborilmoqda...",
   "contact.successTitle": "So‘rov qabul qilindi!",
   "contact.successText": "Taska menejeri ko‘rsatilgan raqam orqali tez orada siz bilan bog‘lanadi.",
-  "contact.warnCrmTitle": "So‘rov Telegramga yuborildi",
-  "contact.warnCrmText": "CRM hozircha ishlamayapti (server xatosi). So‘rovingiz Telegramda va tez orada bog‘lanamiz.",
   "contact.errorTitle": "Yuborib bo‘lmadi",
   "contact.errorText": "Bir daqiqadan keyin qayta urinib ko‘ring yoki Telegram / telefon orqali yozing.",
   "contact.sendAnother": "Yana bir yuborish",
