@@ -6,7 +6,7 @@
 
 - **Node.js** LTS
 - `npm install`
-- Скопируйте `.env.example` → `.env.local`. Лиды по умолчанию уходят на **`POST https://tipa.taska.uz/api/deals`**; при другом хосте задайте **`VITE_LEAD_SUBMIT_URL`**. Опционально: **`VITE_TIPA_FUNNEL_ID`**, Telegram.
+- Скопируйте `.env.example` → `.env.local`. Лиды по умолчанию: **`POST /api/deals`** (тот же origin). Локально Vite проксирует на tipa; в проде нужен **nginx** (см. ниже). Опционально: **`VITE_LEAD_SUBMIT_URL`**, **`VITE_TIPA_FUNNEL_ID`**, Telegram.
 - `npm run dev`
 
 ## Сборка
@@ -47,6 +47,20 @@
 
 На nginx для hashed-ассетов из `dist/assets/` имеет смысл длинный кэш (`immutable`, `max-age` год) и **HTTP/2**; **push** по сути снят с повестки в пользу **preload/prefetch** из HTML (у нас prefetch локалей делается из JS). Для растровых баннеров позже можно добавить **AVIF/WebP** в `<picture>` — сейчас в логотипах партнёров в основном SVG.
 
+**Прокси заявок в CRM (обязательно в проде):** фронт шлёт **`POST /api/deals`** на тот же хост (`taska.uz`), иначе браузер блокирует прямой запрос на `tipa.taska.uz` (CORS). Пример локации:
+
+```nginx
+location /api/deals {
+    proxy_pass https://tipa.taska.uz/api/deals;
+    proxy_http_version 1.1;
+    proxy_set_header Host tipa.taska.uz;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Content-Type $http_content_type;
+}
+```
+
 ## Контакты и SEO
 
 Публичные телефон / email / Telegram: **`config/siteContact.ts`**. Поля `telephone` и `sameAs` в JSON-LD в `index.html` держите в синке с этим файлом.
@@ -55,7 +69,7 @@
 
 `services/api.ts` → **`submitLead`**:
 
-1. **`POST {base}/api/deals`** — по умолчанию **`https://tipa.taska.uz/api/deals`**. Тело JSON (camelCase), как **create_deal**: минимум `title`, `contactName`, `notes`, `source` (`taska.uz`), `stage` (`new`); при необходимости `amount`, `currency`, `funnelId` (через `VITE_TIPA_FUNNEL_ID`). UTM из браузера добавляются в текст **`notes`**. Заголовок: **`Content-Type: application/json`**. **Authorization / API-key для этой ручки не используются.**
+1. **`POST /api/deals`** на **том же origin**, nginx проксирует на **`https://tipa.taska.uz/api/deals`**. Тело JSON (camelCase), как **create_deal**: минимум `title`, `contactName`, `notes`, `source` (`taska.uz`), `stage` (`new`); при необходимости `amount`, `currency`, `funnelId` (через `VITE_TIPA_FUNNEL_ID`). UTM из браузера добавляются в текст **`notes`**. Заголовок: **`Content-Type: application/json`**. **Authorization / API-key для этой ручки не используются.**
 2. Параллельно — **Telegram**, если заданы `VITE_TELEGRAM_BOT_TOKEN` и `VITE_TELEGRAM_CHAT_ID`.
 
-Запрос с фронта `taska.uz` в браузере требует **CORS** на tipa: в `.env` API, например `CORS_ORIGINS=…,https://taska.uz,https://www.taska.uz`.
+Прямой запрос из браузера на `tipa.taska.uz` без прокси не проходит из‑за **CORS**; альтернатива — настроить `Access-Control-Allow-Origin` на стороне tipa (менее удобно, чем прокси на nginx).

@@ -2,8 +2,12 @@ import type { Lead } from '../types';
 import { trackMetrikaGoal } from './metrics';
 import { getCurrentUTMParams } from './utmTracking';
 
-/** Публичный приём заявок как сделок: POST {base}/api/deals */
-const DEFAULT_DEALS_URL = 'https://tipa.taska.uz/api/deals';
+/**
+ * Приём заявок: POST /api/deals на том же origin (nginx проксирует на tipa.taska.uz),
+ * иначе браузер блокирует кросс-доменный запрос — у tipa нет корректного CORS для taska.uz.
+ * Переопределение: VITE_LEAD_SUBMIT_URL (например прямой URL только для отладки с сервера).
+ */
+const DEFAULT_DEALS_URL = '/api/deals';
 
 const dealsUrl = () => import.meta.env.VITE_LEAD_SUBMIT_URL?.trim() || DEFAULT_DEALS_URL;
 
@@ -139,7 +143,7 @@ async function notifyTelegram(leadData: Lead): Promise<boolean> {
 }
 
 /**
- * POST https://tipa.taska.uz/api/deals (или `VITE_LEAD_SUBMIT_URL`) + Telegram.
+ * POST `/api/deals` (тот же origin → tipa) или `VITE_LEAD_SUBMIT_URL` + Telegram.
  * Успех, если сработал хотя бы один канал.
  */
 export const submitLead = async (leadData: Lead): Promise<boolean> => {

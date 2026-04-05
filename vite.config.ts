@@ -7,6 +7,14 @@ export default defineConfig({
   server: {
     port: 3000,
     host: '0.0.0.0',
+    /** Локально fetch('/api/deals') → tipa без CORS (как в проде за nginx). */
+    proxy: {
+      '/api/deals': {
+        target: 'https://tipa.taska.uz',
+        changeOrigin: true,
+        secure: true,
+      },
+    },
   },
   build: {
     chunkSizeWarningLimit: 600,

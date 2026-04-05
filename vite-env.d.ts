@@ -5,7 +5,7 @@ interface ImportMetaEnv {
   /** Канонический origin сайта (для SEO и e2e). По умолчанию https://taska.uz */
   readonly VITE_SITE_ORIGIN?: string;
   /**
-   * Полный URL создания сделки. По умолчанию: https://tipa.taska.uz/api/deals
+   * URL создания сделки. По умолчанию: `/api/deals` (тот же origin; в проде nginx → tipa).
    */
   readonly VITE_LEAD_SUBMIT_URL?: string;
   /** Опционально: funnelId для CRM на tipa */
