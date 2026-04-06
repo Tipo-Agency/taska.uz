@@ -46,7 +46,7 @@ export const Footer: React.FC = () => {
                 <Instagram size={18} />
               </a>
               <a
-                href="https://facebook.com/taska.uz"
+                href="https://www.facebook.com/profile.php?id=61585811099904#"
                 aria-label="Facebook"
                 className="w-10 h-10 rounded-full bg-canvas-elevated border border-slate-200/90 flex items-center justify-center text-ink-muted hover:bg-brand hover:text-white hover:border-brand transition-all duration-200 shadow-soft"
               >
