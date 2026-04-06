@@ -1,18 +1,29 @@
 import path from 'path';
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => {
+  /** Без префикса VITE_ — не попадает в клиентский бандл; только для dev-прокси. */
+  const tipaSiteKey = loadEnv(mode, process.cwd(), '').TIPA_SITE_API_KEY?.trim() || '';
+
+  return {
   server: {
     port: 3000,
     host: '0.0.0.0',
-    /** Локально `/api/*` → tipa (как nginx в проде). */
+    /** Локально `/api/*` → tipa (как nginx в проде). X-Api-Key — из TIPA_SITE_API_KEY. */
     proxy: {
       '/api': {
         target: 'https://tipa.taska.uz',
         changeOrigin: true,
         secure: true,
+        configure(proxy) {
+          proxy.on('proxyReq', (proxyReq, req) => {
+            if (tipaSiteKey && req.url?.includes('integrations/site/leads')) {
+              proxyReq.setHeader('X-Api-Key', tipaSiteKey);
+            }
+          });
+        },
       },
     },
   },
@@ -69,4 +80,5 @@ export default defineConfig({
       '@': path.resolve(__dirname, '.'),
     },
   },
+};
 });

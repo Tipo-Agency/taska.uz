@@ -3,14 +3,13 @@ import { trackMetrikaGoal } from './metrics';
 import { getCurrentUTMParams } from './utmTracking';
 
 /**
- * Приём заявок: POST /api/integrations/site/leads (nginx → tipa.taska.uz) + заголовок X-Api-Key.
- * Переопределение: VITE_LEAD_SUBMIT_URL.
+ * Приём заявок: POST /api/integrations/site/leads (тот же origin).
+ * Ключ X-Api-Key добавляет nginx на сервере (или Vite-прокси в dev — см. README), не фронт.
+ * Переопределение URL: VITE_LEAD_SUBMIT_URL.
  */
 const DEFAULT_SITE_LEADS_URL = '/api/integrations/site/leads';
 
 const siteLeadsUrl = () => import.meta.env.VITE_LEAD_SUBMIT_URL?.trim() || DEFAULT_SITE_LEADS_URL;
-
-const tipaApiKey = () => import.meta.env.VITE_TIPA_API_KEY?.trim() || '';
 
 /** Опционально: ID воронки / источника в CRM tipa (задаются в .env при сборке) */
 const funnelIdFromEnv = () => import.meta.env.VITE_TIPA_FUNNEL_ID?.trim() || '';
@@ -97,15 +96,10 @@ function buildSiteLeadPayload(leadData: Lead): SiteLeadPayload {
 
 async function postSiteLeadToTipa(payload: SiteLeadPayload): Promise<boolean> {
   const url = siteLeadsUrl();
-  const key = tipaApiKey();
-  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-  if (key) {
-    headers['X-Api-Key'] = key;
-  }
   try {
     const res = await fetch(url, {
       method: 'POST',
-      headers,
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
       mode: 'cors',
       /** Без кук: иначе nginx на taska.uz может ответить «400 Request Header Or Cookie Too Large». */
@@ -180,7 +174,7 @@ export type SubmitLeadResult = {
 };
 
 /**
- * POST `/api/integrations/site/leads` + `X-Api-Key` (сборка: `VITE_TIPA_API_KEY`) и Telegram параллельно.
+ * POST `/api/integrations/site/leads` (ключ `X-Api-Key` добавляет nginx / dev-прокси, не клиент) и Telegram параллельно.
  * `crmOk` / `telegramOk` — для отладки; пользователю показываем один сценарий успеха при `ok`.
  */
 export const submitLead = async (leadData: Lead): Promise<SubmitLeadResult> => {

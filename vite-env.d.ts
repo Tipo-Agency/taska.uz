@@ -8,8 +8,6 @@ interface ImportMetaEnv {
    * URL приёма лидов с сайта. По умолчанию: `/api/integrations/site/leads`.
    */
   readonly VITE_LEAD_SUBMIT_URL?: string;
-  /** Ключ из админки tipa (GitHub Secret `Tipa_Kay` → VITE_TIPA_API_KEY при сборке) */
-  readonly VITE_TIPA_API_KEY?: string;
   /** Опционально: funnelId для CRM на tipa */
   readonly VITE_TIPA_FUNNEL_ID?: string;
   /** Опционально: UUID источника лида в справочнике tipa */
