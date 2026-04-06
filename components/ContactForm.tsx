@@ -19,14 +19,13 @@ export const ContactForm: React.FC = () => {
     e.preventDefault();
     setIsLoading(true);
     const fullPhone = toFullUzPhone(contact);
-    const result = await submitLead({
+    const ok = await submitLead({
       name,
       contact: fullPhone,
       message: '',
       source: 'footer_form',
-      date: new Date().toLocaleString('ru-RU'),
     });
-    if (result.ok) {
+    if (ok) {
       setOutcome('success');
       setSubmitted(true);
       setName('');

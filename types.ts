@@ -26,5 +26,4 @@ export interface Lead {
   contact: string;
   message: string;
   source: 'footer_form' | 'modal_form';
-  date: string;
 }

@@ -15,10 +15,6 @@ const siteLeadsUrl = () => import.meta.env.VITE_LEAD_SUBMIT_URL?.trim() || DEFAU
 const funnelIdFromEnv = () => import.meta.env.VITE_TIPA_FUNNEL_ID?.trim() || '';
 const sourceIdFromEnv = () => import.meta.env.VITE_TIPA_SOURCE_ID?.trim() || '';
 
-/**
- * Тело POST интеграции «сайт → лиды» (camelCase, совместимо с прежним create_deal).
- * @see README — раздел «Заявки»
- */
 export interface SiteLeadPayload {
   title: string;
   contactName: string;
@@ -36,6 +32,11 @@ export interface SiteLeadPayload {
   amount?: number;
   currency?: string;
 }
+
+const FORM_SOURCE_LABEL: Record<Lead['source'], string> = {
+  modal_form: 'модальное окно',
+  footer_form: 'форма внизу страницы',
+};
 
 function buildPhoneLines(rawContact: string): { display: string; compact: string } {
   const raw = rawContact.trim();
@@ -55,7 +56,7 @@ function buildNotes(leadData: Lead, phoneDisplay: string): string {
   const lines: string[] = [];
   if (phoneDisplay) lines.push(`Телефон: ${phoneDisplay}`);
   if (leadData.message?.trim()) lines.push(`Сообщение: ${leadData.message.trim()}`);
-  lines.push(`Форма: ${leadData.source === 'modal_form' ? 'модальное окно' : 'форма внизу страницы'}`);
+  lines.push(`Форма: ${FORM_SOURCE_LABEL[leadData.source]}`);
 
   const utm = getCurrentUTMParams();
   const utmPairs = Object.entries(utm).filter(([, v]) => Boolean(v?.trim?.()));
@@ -122,25 +123,21 @@ async function postSiteLeadToTipa(payload: SiteLeadPayload): Promise<boolean> {
   }
 }
 
-export type SubmitLeadResult = {
-  /** Лид принят tipa (POST site/leads → 2xx) */
-  ok: boolean;
-};
-
 /**
  * POST `/api/integrations/site/leads` — ключ `X-Api-Key` добавляет nginx / dev-прокси, не клиент.
- * Уведомления настраиваются в CRM (tipa), отдельный бот с сайта не используется.
+ * Уведомления настраиваются в CRM (tipa).
+ * @returns `true`, если tipa ответила 2xx.
  */
-export const submitLead = async (leadData: Lead): Promise<SubmitLeadResult> => {
+export const submitLead = async (leadData: Lead): Promise<boolean> => {
   try {
     const payload = buildSiteLeadPayload(leadData);
     const ok = await postSiteLeadToTipa(payload);
     if (ok) {
       trackMetrikaGoal('lead_submit');
     }
-    return { ok };
+    return ok;
   } catch (error) {
     console.error('[submitLead]', error);
-    return { ok: false };
+    return false;
   }
 };

@@ -24,14 +24,13 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
     e.preventDefault();
     setIsLoading(true);
     const fullPhone = toFullUzPhone(contact);
-    const result = await submitLead({
+    const ok = await submitLead({
       name,
       contact: fullPhone,
       message: '',
       source: 'modal_form',
-      date: new Date().toLocaleString('ru-RU'),
     });
-    if (result.ok) {
+    if (ok) {
       setOutcome('success');
       setSubmitted(true);
       setName('');

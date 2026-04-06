@@ -1,14 +1,9 @@
 import { test, expect } from '@playwright/test';
+import { mockSiteLeadsOk } from './mockSiteLeads';
 
 test.describe('Contact modal', () => {
   test('shows success after submit when site/leads returns 200', async ({ page }) => {
-    await page.route('**/api/integrations/site/leads', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: '{}',
-      });
-    });
+    await mockSiteLeadsOk(page);
 
     await page.goto('/');
     await page.getByTestId('header-cta-contact').click();
