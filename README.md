@@ -6,7 +6,7 @@
 
 - **Node.js** LTS
 - `npm install`
-- Скопируйте `.env.example` → `.env.local`. Лиды по умолчанию: **`POST /api/deals`** (тот же origin). Локально Vite проксирует на tipa; в проде нужен **nginx** (см. ниже). Опционально: **`VITE_LEAD_SUBMIT_URL`**, **`VITE_TIPA_FUNNEL_ID`**, **`VITE_TIPA_SOURCE_ID`** (UUID из tipa), Telegram.
+- Скопируйте `.env.example` → `.env.local`. Лиды: **`POST /api/integrations/site/leads`** + **`X-Api-Key`** (`VITE_TIPA_API_KEY`). Локально Vite проксирует **`/api`** на tipa; в проде — **nginx** (см. ниже). В deploy: Secret **`Tipa_Kay`**. Опционально: **`VITE_LEAD_SUBMIT_URL`**, **`VITE_TIPA_FUNNEL_ID`**, **`VITE_TIPA_SOURCE_ID`**, Telegram.
 - `npm run dev`
 
 ## Сборка
@@ -45,11 +45,11 @@
 
 ## Деплой
 
-В GitHub задайте Secrets для workflow `.github/workflows/deploy.yml`: `SERVER_HOST`, `SERVER_USER`, `SERVER_PATH`, `SERVER_SSH_KEY`. Пуш в `main` выполняет pull на сервере и сборку.
+В GitHub задайте Secrets для workflow `.github/workflows/deploy.yml`: `SERVER_HOST`, `SERVER_USER`, `SERVER_PATH`, `SERVER_SSH_KEY`, **`Tipa_Kay`** (ключ API для лидов), плюс при необходимости `VITE_TELEGRAM_*`, `VITE_TIPA_FUNNEL_ID`, `VITE_TIPA_SOURCE_ID`. Пуш в `main` выполняет pull на сервере и сборку.
 
 На nginx для hashed-ассетов из `dist/assets/` имеет смысл длинный кэш (`immutable`, `max-age` год) и **HTTP/2**; **push** по сути снят с повестки в пользу **preload/prefetch** из HTML (у нас prefetch локалей делается из JS). Для растровых баннеров позже можно добавить **AVIF/WebP** в `<picture>` — сейчас в логотипах партнёров в основном SVG.
 
-**Прокси заявок в CRM (обязательно в проде):** фронт шлёт **`POST /api/deals`** на тот же хост (`taska.uz`), иначе браузер блокирует прямой запрос на `tipa.taska.uz` (CORS).
+**Прокси API tipa (обязательно в проде):** фронт шлёт **`POST /api/integrations/site/leads`** на тот же хост (`taska.uz`), иначе браузер не сходит на `tipa.taska.uz` из‑за CORS. Удобнее один префикс **`/api/`**:
 
 Если nginx отвечает **400 Request Header Or Cookie Too Large**, в блоке **`server { ... }`** для `taska.uz` (или в `http { }`) **обязательно** увеличьте буферы под большие Cookie от метрики/рекламы — иначе запрос не дойдёт до прокси:
 
@@ -60,11 +60,11 @@ large_client_header_buffers 4 32k;
 
 Фронт шлёт **`credentials: 'omit'`**, но заголовки от браузера всё равно могут быть тяжёлыми — без строк выше CRM может не получать лиды.
 
-Пример **`location`**:
+Пример **`location`** (все пути `/api/...` на tipa, в т.ч. лиды):
 
 ```nginx
-location /api/deals {
-    proxy_pass https://tipa.taska.uz/api/deals;
+location /api/ {
+    proxy_pass https://tipa.taska.uz/api/;
     proxy_http_version 1.1;
     proxy_ssl_server_name on;
     proxy_set_header Host tipa.taska.uz;
@@ -84,7 +84,7 @@ location /api/deals {
 
 `services/api.ts` → **`submitLead`**:
 
-1. **`POST /api/deals`** на **том же origin**, nginx проксирует на **`https://tipa.taska.uz/api/deals`**. Тело JSON (camelCase): `title`, `contactName`, `phone` / `contactPhone` (номер с сайта, иначе в CRM пусто в поле контакта), `notes`, `source` (`taska.uz`), `stage` (`new`); опционально `funnelId` и `sourceId` (**`VITE_TIPA_FUNNEL_ID`** / **`VITE_TIPA_SOURCE_ID`** в `.env` при сборке — UUID из админки tipa, иначе выпадающие «Воронка» и «Источник» остаются пустыми). UTM в **`notes`**. **`Content-Type: application/json`**. **Без Authorization.**
+1. **`POST /api/integrations/site/leads`** на **том же origin**, nginx → **`https://tipa.taska.uz/api/integrations/site/leads`**. Заголовок **`X-Api-Key`**: ключ из админки tipa, в сборке — **`VITE_TIPA_API_KEY`** (GitHub Secret **`Tipa_Kay`** в `deploy.yml`). Тело JSON (camelCase): `title`, `contactName`, `phone` / `contactPhone`, `notes`, `source`, `stage`; опционально `funnelId`, `sourceId`. UTM в **`notes`**. Ключ попадает в клиентский бандл — ограничивайте использование ключа в админке tipa (домен и т.д.).
 2. Параллельно — **Telegram**, если заданы `VITE_TELEGRAM_BOT_TOKEN` и `VITE_TELEGRAM_CHAT_ID`.
 
-Прямой запрос из браузера на `tipa.taska.uz` без прокси не проходит из‑за **CORS**; альтернатива — настроить `Access-Control-Allow-Origin` на стороне tipa (менее удобно, чем прокси на nginx).
+Прямой запрос на `tipa.taska.uz` из браузера без прокси — **CORS**; прокси **`/api/`** на nginx — основной вариант.

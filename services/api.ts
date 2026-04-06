@@ -3,24 +3,24 @@ import { trackMetrikaGoal } from './metrics';
 import { getCurrentUTMParams } from './utmTracking';
 
 /**
- * Приём заявок: POST /api/deals на том же origin (nginx проксирует на tipa.taska.uz),
- * иначе браузер блокирует кросс-доменный запрос — у tipa нет корректного CORS для taska.uz.
- * Переопределение: VITE_LEAD_SUBMIT_URL (например прямой URL только для отладки с сервера).
+ * Приём заявок: POST /api/integrations/site/leads (nginx → tipa.taska.uz) + заголовок X-Api-Key.
+ * Переопределение: VITE_LEAD_SUBMIT_URL.
  */
-const DEFAULT_DEALS_URL = '/api/deals';
+const DEFAULT_SITE_LEADS_URL = '/api/integrations/site/leads';
 
-const dealsUrl = () => import.meta.env.VITE_LEAD_SUBMIT_URL?.trim() || DEFAULT_DEALS_URL;
+const siteLeadsUrl = () => import.meta.env.VITE_LEAD_SUBMIT_URL?.trim() || DEFAULT_SITE_LEADS_URL;
+
+const tipaApiKey = () => import.meta.env.VITE_TIPA_API_KEY?.trim() || '';
 
 /** Опционально: ID воронки / источника в CRM tipa (задаются в .env при сборке) */
 const funnelIdFromEnv = () => import.meta.env.VITE_TIPA_FUNNEL_ID?.trim() || '';
 const sourceIdFromEnv = () => import.meta.env.VITE_TIPA_SOURCE_ID?.trim() || '';
 
 /**
- * Тело POST /api/deals (camelCase, как create_deal на tipa.taska.uz).
- * Телефон дублируем в `phone` / `contactPhone` — в интерфейсе CRM подставляются в поля контакта, не только в «Примечание».
+ * Тело POST интеграции «сайт → лиды» (camelCase, совместимо с прежним create_deal).
  * @see README — раздел «Заявки»
  */
-export interface TipaDealCreateBody {
+export interface SiteLeadPayload {
   title: string;
   contactName: string;
   notes: string;
@@ -66,12 +66,12 @@ function buildNotes(leadData: Lead, phoneDisplay: string): string {
   return lines.join('\n');
 }
 
-function buildDealPayload(leadData: Lead): TipaDealCreateBody {
+function buildSiteLeadPayload(leadData: Lead): SiteLeadPayload {
   const name = (leadData.name || '').trim();
   const { display: phoneDisplay, compact: phoneCompact } = buildPhoneLines(leadData.contact || '');
   const phone = phoneCompact || phoneDisplay || undefined;
 
-  const payload: TipaDealCreateBody = {
+  const payload: SiteLeadPayload = {
     title: name ? `Заявка с сайта: ${name}` : 'Заявка с сайта taska.uz',
     contactName: name || '—',
     notes: buildNotes(leadData, phoneDisplay),
@@ -95,12 +95,17 @@ function buildDealPayload(leadData: Lead): TipaDealCreateBody {
   return payload;
 }
 
-async function postDealToTipa(payload: TipaDealCreateBody): Promise<boolean> {
-  const url = dealsUrl();
+async function postSiteLeadToTipa(payload: SiteLeadPayload): Promise<boolean> {
+  const url = siteLeadsUrl();
+  const key = tipaApiKey();
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (key) {
+    headers['X-Api-Key'] = key;
+  }
   try {
     const res = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify(payload),
       mode: 'cors',
       /** Без кук: иначе nginx на taska.uz может ответить «400 Request Header Or Cookie Too Large». */
@@ -110,15 +115,15 @@ async function postDealToTipa(payload: TipaDealCreateBody): Promise<boolean> {
     if (!res.ok) {
       const text = await res.text().catch(() => '');
       if (import.meta.env.DEV) {
-        console.error('[submitLead] POST /api/deals', res.status, text);
+        console.error('[submitLead] POST site/leads', res.status, text);
       } else {
-        console.error('[submitLead] POST /api/deals', res.status);
+        console.error('[submitLead] POST site/leads', res.status);
       }
       return false;
     }
     return true;
   } catch (error) {
-    if (import.meta.env.DEV) console.error('[submitLead] /api/deals', error);
+    if (import.meta.env.DEV) console.error('[submitLead] site/leads', error);
     return false;
   }
 }
@@ -166,7 +171,7 @@ async function notifyTelegram(leadData: Lead): Promise<boolean> {
 }
 
 export type SubmitLeadResult = {
-  /** Сделка создана в CRM (POST /api/deals → 2xx) */
+  /** Лид принят tipa (POST site/leads → 2xx) */
   crmOk: boolean;
   /** Сообщение ушло в Telegram */
   telegramOk: boolean;
@@ -175,13 +180,13 @@ export type SubmitLeadResult = {
 };
 
 /**
- * POST `/api/deals` (тот же origin → tipa) + Telegram параллельно.
+ * POST `/api/integrations/site/leads` + `X-Api-Key` (сборка: `VITE_TIPA_API_KEY`) и Telegram параллельно.
  * `crmOk` / `telegramOk` — для отладки; пользователю показываем один сценарий успеха при `ok`.
  */
 export const submitLead = async (leadData: Lead): Promise<SubmitLeadResult> => {
   try {
-    const payload = buildDealPayload(leadData);
-    const [crmOk, telegramOk] = await Promise.all([postDealToTipa(payload), notifyTelegram(leadData)]);
+    const payload = buildSiteLeadPayload(leadData);
+    const [crmOk, telegramOk] = await Promise.all([postSiteLeadToTipa(payload), notifyTelegram(leadData)]);
     const ok = crmOk || telegramOk;
     if (ok) {
       trackMetrikaGoal('lead_submit');
