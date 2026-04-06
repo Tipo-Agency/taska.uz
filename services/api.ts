@@ -122,72 +122,25 @@ async function postSiteLeadToTipa(payload: SiteLeadPayload): Promise<boolean> {
   }
 }
 
-async function notifyTelegram(leadData: Lead): Promise<boolean> {
-  const botToken = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
-  const chatId = import.meta.env.VITE_TELEGRAM_CHAT_ID;
-  if (!botToken || !chatId) {
-    return false;
-  }
-
-  const name = (leadData.name || '').trim();
-  const { compact: fullPhone } = buildPhoneLines(leadData.contact || '');
-
-  const text = [
-    '<b>Новая заявка taska.uz</b>',
-    '',
-    `<b>Имя:</b> ${name || '—'}`,
-    `<b>Телефон:</b> ${fullPhone || leadData.contact || '—'}`,
-    leadData.message ? `<b>Сообщение:</b> ${leadData.message}` : '',
-    `<b>Источник:</b> ${leadData.source === 'modal_form' ? 'модальное окно' : 'форма на странице'}`,
-  ]
-    .filter(Boolean)
-    .join('\n');
-
-  try {
-    const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text,
-        parse_mode: 'HTML',
-      }),
-    });
-    if (!res.ok && import.meta.env.DEV) {
-      const errText = await res.text().catch(() => '');
-      console.error('[submitLead] Telegram:', res.status, errText);
-    }
-    return res.ok;
-  } catch (error) {
-    if (import.meta.env.DEV) console.error('[submitLead] Telegram:', error);
-    return false;
-  }
-}
-
 export type SubmitLeadResult = {
   /** Лид принят tipa (POST site/leads → 2xx) */
-  crmOk: boolean;
-  /** Сообщение ушло в Telegram */
-  telegramOk: boolean;
-  /** Хотя бы один канал сработал — можно не ронять UX полностью */
   ok: boolean;
 };
 
 /**
- * POST `/api/integrations/site/leads` (ключ `X-Api-Key` добавляет nginx / dev-прокси, не клиент) и Telegram параллельно.
- * `crmOk` / `telegramOk` — для отладки; пользователю показываем один сценарий успеха при `ok`.
+ * POST `/api/integrations/site/leads` — ключ `X-Api-Key` добавляет nginx / dev-прокси, не клиент.
+ * Уведомления настраиваются в CRM (tipa), отдельный бот с сайта не используется.
  */
 export const submitLead = async (leadData: Lead): Promise<SubmitLeadResult> => {
   try {
     const payload = buildSiteLeadPayload(leadData);
-    const [crmOk, telegramOk] = await Promise.all([postSiteLeadToTipa(payload), notifyTelegram(leadData)]);
-    const ok = crmOk || telegramOk;
+    const ok = await postSiteLeadToTipa(payload);
     if (ok) {
       trackMetrikaGoal('lead_submit');
     }
-    return { crmOk, telegramOk, ok };
+    return { ok };
   } catch (error) {
     console.error('[submitLead]', error);
-    return { crmOk: false, telegramOk: false, ok: false };
+    return { ok: false };
   }
 };

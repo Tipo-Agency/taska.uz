@@ -12,8 +12,6 @@ interface ImportMetaEnv {
   readonly VITE_TIPA_FUNNEL_ID?: string;
   /** Опционально: UUID источника лида в справочнике tipa */
   readonly VITE_TIPA_SOURCE_ID?: string;
-  readonly VITE_TELEGRAM_BOT_TOKEN?: string;
-  readonly VITE_TELEGRAM_CHAT_ID?: string;
 }
 
 interface ImportMeta {

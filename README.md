@@ -6,7 +6,7 @@
 
 - **Node.js** LTS
 - `npm install`
-- Скопируйте `.env.example` → `.env.local`. Лиды: **`POST /api/integrations/site/leads`**; заголовок **`X-Api-Key`** не из браузера: в проде его добавляет **nginx** на сервере, локально — **`TIPA_SITE_API_KEY`** в прокси Vite (без префикса `VITE_`, в бандл не попадает). Опционально: **`VITE_LEAD_SUBMIT_URL`**, **`VITE_TIPA_FUNNEL_ID`**, **`VITE_TIPA_SOURCE_ID`**, Telegram.
+- Скопируйте `.env.example` → `.env.local`. Лиды: **`POST /api/integrations/site/leads`**; заголовок **`X-Api-Key`** не из браузера: в проде его добавляет **nginx** на сервере, локально — **`TIPA_SITE_API_KEY`** в прокси Vite (без префикса `VITE_`, в бандл не попадает). Опционально: **`VITE_LEAD_SUBMIT_URL`**, **`VITE_TIPA_FUNNEL_ID`**, **`VITE_TIPA_SOURCE_ID`**.
 - `npm run dev`
 
 ## Сборка
@@ -45,7 +45,7 @@
 
 ## Деплой
 
-В GitHub задайте Secrets для workflow `.github/workflows/deploy.yml`: `SERVER_HOST`, `SERVER_USER`, `SERVER_PATH`, `SERVER_SSH_KEY`, плюс при необходимости `VITE_TELEGRAM_*`, `VITE_TIPA_FUNNEL_ID`, `VITE_TIPA_SOURCE_ID`. Ключ tipa для лидов храните **только на сервере** в конфиге nginx (см. ниже), не в переменных сборки. Пуш в `main` выполняет pull на сервере и сборку.
+В GitHub задайте Secrets для workflow `.github/workflows/deploy.yml`: `SERVER_HOST`, `SERVER_USER`, `SERVER_PATH`, `SERVER_SSH_KEY`, плюс при необходимости `VITE_TIPA_FUNNEL_ID`, `VITE_TIPA_SOURCE_ID`. Ключ tipa для лидов храните **только на сервере** в конфиге nginx (см. ниже), не в переменных сборки. Пуш в `main` выполняет pull на сервере и сборку.
 
 На nginx для hashed-ассетов из `dist/assets/` имеет смысл длинный кэш (`immutable`, `max-age` год) и **HTTP/2**; **push** по сути снят с повестки в пользу **preload/prefetch** из HTML (у нас prefetch локалей делается из JS). Для растровых баннеров позже можно добавить **AVIF/WebP** в `<picture>` — сейчас в логотипах партнёров в основном SVG.
 
@@ -86,7 +86,6 @@ location /api/ {
 
 `services/api.ts` → **`submitLead`**:
 
-1. **`POST /api/integrations/site/leads`** на **том же origin**, nginx → **`https://tipa.taska.uz/api/integrations/site/leads`**. Заголовок **`X-Api-Key`** задаётся **только в nginx** (или в dev — **`TIPA_SITE_API_KEY`** в Vite-прокси), в статике сайта ключей нет. Тело JSON (camelCase): `title`, `contactName`, `phone` / `contactPhone`, `notes`, `source`, `stage`; опционально `funnelId`, `sourceId`. UTM в **`notes`**. Endpoint снаружи по-прежнему публичный POST — при спаме имеет смысл rate limit на nginx или в tipa.
-2. Параллельно — **Telegram**, если заданы `VITE_TELEGRAM_BOT_TOKEN` и `VITE_TELEGRAM_CHAT_ID`.
+1. **`POST /api/integrations/site/leads`** на **том же origin**, nginx → **`https://tipa.taska.uz/api/integrations/site/leads`**. Заголовок **`X-Api-Key`** задаётся **только в nginx** (или в dev — **`TIPA_SITE_API_KEY`** в Vite-прокси), в статике сайта ключей нет. Тело JSON (camelCase): `title`, `contactName`, `phone` / `contactPhone`, `notes`, `source`, `stage`; опционально `funnelId`, `sourceId`. UTM в **`notes`**. Уведомления (Telegram и т.д.) настраиваются в CRM, отдельной интеграции с сайта нет. Endpoint снаружи по-прежнему публичный POST — при спаме имеет смысл rate limit на nginx или в tipa.
 
 Прямой запрос на `tipa.taska.uz` из браузера без прокси — **CORS**; прокси **`/api/`** на nginx — основной вариант.
