@@ -1,6 +1,6 @@
 export const NEWS_IDS = [
-  'production-module-release',
   'social-inbox-funnel-integration',
+  'production-module-release',
   'analytics-dashboards',
   'weekly-plans-meetings',
   'telegram-automation',
