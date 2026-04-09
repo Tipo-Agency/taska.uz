@@ -91,6 +91,18 @@
     <priority>0.85</priority>
   </url>
   <url>
+    <loc>https://taska.uz/news/production-module-release</loc>
+    <lastmod>2026-04-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://taska.uz/news/social-inbox-funnel-integration</loc>
+    <lastmod>2026-04-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://taska.uz/news/analytics-dashboards</loc>
     <lastmod>2026-04-05</lastmod>
     <changefreq>monthly</changefreq>

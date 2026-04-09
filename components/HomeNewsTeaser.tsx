@@ -7,6 +7,8 @@ import { NEWS_IDS, type NewsId } from '../config/news';
 import { paths } from '../routes/paths';
 
 const NEWS_ACCENT: Record<NewsId, { bar: string; soft: string }> = {
+  'production-module-release': { bar: 'from-violet-500 to-fuchsia-500', soft: 'from-violet-500/14 to-fuchsia-500/8' },
+  'social-inbox-funnel-integration': { bar: 'from-cyan-500 to-sky-500', soft: 'from-cyan-500/14 to-sky-500/8' },
   'analytics-dashboards': { bar: 'from-sky-500 to-cyan-500', soft: 'from-sky-500/12 to-cyan-500/5' },
   'weekly-plans-meetings': { bar: 'from-amber-500 to-orange-500', soft: 'from-amber-500/12 to-orange-500/5' },
   'telegram-automation': { bar: 'from-brand to-emerald-600', soft: 'from-brand/15 to-emerald-500/8' },

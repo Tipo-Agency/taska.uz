@@ -1,4 +1,10 @@
-export const NEWS_IDS = ['analytics-dashboards', 'weekly-plans-meetings', 'telegram-automation'] as const;
+export const NEWS_IDS = [
+  'production-module-release',
+  'social-inbox-funnel-integration',
+  'analytics-dashboards',
+  'weekly-plans-meetings',
+  'telegram-automation',
+] as const;
 
 export type NewsId = (typeof NEWS_IDS)[number];
 
