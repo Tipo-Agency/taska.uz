@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { MarketingPageShell } from '../components/MarketingPageShell';
 import { useLanguage } from '../contexts/LanguageContext';
 
-const SECTION_KEYS = ['s1', 's2', 's3', 's4'] as const;
+const SECTION_KEYS = ['s1', 's2', 's3', 's4', 's5', 's6', 's7', 's8', 's9', 's10'] as const;
 
 const TermsPage: React.FC = () => {
   const { t } = useLanguage();
