@@ -96,11 +96,11 @@ const InvestorsPage: React.FC = () => {
                 transition={{ delay: i * 0.04 }}
                 className="rounded-2xl border border-slate-200/80 bg-gradient-to-br from-white to-cyan-50/25 px-5 py-4"
               >
-                <div className="flex items-start gap-3.5">
-                  <div className="rounded-xl bg-cyan-100 p-2.5 text-cyan-950 h-fit shrink-0">
+                <div className="space-y-3">
+                  <div className="rounded-xl bg-cyan-100 p-2.5 text-cyan-950 h-fit w-fit">
                     <Icon size={20} />
                   </div>
-                  <div>
+                  <div className="space-y-1">
                     <h3 className="text-sm md:text-base font-semibold text-ink mb-1">{title}</h3>
                     <p className="text-ink-muted text-sm leading-relaxed">{body}</p>
                   </div>
@@ -149,11 +149,11 @@ const InvestorsPage: React.FC = () => {
           <div className="grid gap-3.5 md:grid-cols-3">
             {model.map(({ icon: Icon, title, body }) => (
               <article key={title} className="rounded-2xl border border-slate-200/80 bg-gradient-to-br from-white to-cyan-50/25 px-5 py-4">
-                <div className="flex items-start gap-3.5">
-                  <div className="rounded-xl bg-cyan-100 p-2.5 text-cyan-950 h-fit shrink-0">
+                <div className="space-y-3">
+                  <div className="rounded-xl bg-cyan-100 p-2.5 text-cyan-950 h-fit w-fit">
                     <Icon size={18} />
                   </div>
-                  <div>
+                  <div className="space-y-1">
                     <h3 className="text-sm md:text-base font-semibold text-ink mb-1">{title}</h3>
                     <p className="text-ink-muted text-sm leading-relaxed">{body}</p>
                   </div>
@@ -208,11 +208,11 @@ const InvestorsPage: React.FC = () => {
           <div className="grid gap-3.5 md:grid-cols-3">
             {ask.map(({ icon: Icon, title, body }) => (
               <article key={title} className="rounded-2xl border border-slate-200/80 bg-white/90 px-5 py-4">
-                <div className="flex items-start gap-3.5">
-                  <div className="rounded-xl bg-cyan-100 p-2.5 text-cyan-950 h-fit shrink-0">
+                <div className="space-y-3">
+                  <div className="rounded-xl bg-cyan-100 p-2.5 text-cyan-950 h-fit w-fit">
                     <Icon size={18} />
                   </div>
-                  <div>
+                  <div className="space-y-1">
                     <h3 className="text-sm md:text-base font-semibold text-ink mb-1">{title}</h3>
                     <p className="text-ink-muted text-sm leading-relaxed">{body}</p>
                   </div>
