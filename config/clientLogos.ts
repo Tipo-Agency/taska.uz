@@ -46,24 +46,24 @@ export const CLIENT_LOGO_ITEMS: ClientLogoItem[] = [
     src: logo22412,
     href: 'https://fcriverclub.ru/',
     altKey: 'home.clients.logoAlt4',
-    className: 'h-8 md:h-10 w-auto max-w-[100px] object-contain opacity-90',
+    className: 'h-[2.6rem] md:h-[3.25rem] w-auto max-w-[130px] object-contain opacity-90',
   },
   {
     src: logo3132,
     href: 'https://tipa.uz/ru',
     altKey: 'home.clients.logoAlt5',
-    className: 'h-8 md:h-10 w-auto max-w-[100px] object-contain opacity-90',
+    className: 'h-[2.6rem] md:h-[3.25rem] w-auto max-w-[130px] object-contain opacity-90',
   },
   {
     src: logoChiranaAsia,
     href: 'https://www.chirana-asia.uz/',
     altKey: 'home.clients.logoAlt6',
-    className: 'h-10 md:h-12 w-auto max-w-[120px] object-contain',
+    className: 'h-[6.25rem] md:h-[7.5rem] w-auto max-w-[300px] object-contain',
   },
   {
     src: logoUniquePrint,
     href: 'https://uniqueprint.uz/',
     altKey: 'home.clients.logoAlt7',
-    className: 'h-7 md:h-9 w-auto max-w-[160px] object-contain',
+    className: 'h-14 md:h-[4.5rem] w-auto max-w-[320px] object-contain',
   },
 ];
