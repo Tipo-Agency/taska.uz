@@ -9,7 +9,10 @@ export const ClientLogos: React.FC = () => {
   return (
     <section className="py-12 md:py-16 bg-canvas border-y border-slate-200/70" aria-label={t('home.clients.screenReader')}>
       <div className="container mx-auto px-4">
-        <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-8 md:gap-x-14 md:gap-y-10">
+        <div
+          className="overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth pb-2 [-webkit-overflow-scrolling:touch] [scrollbar-width:thin] [scrollbar-color:rgb(148_163_184/0.9)_transparent]"
+        >
+          <div className="mx-auto flex w-max max-w-none flex-nowrap items-center justify-center gap-x-8 px-1 py-2 md:gap-x-11">
           {CLIENT_LOGO_ITEMS.map((item, i) => {
             const label = t(item.altKey);
             const inner = item.colorMask ? (
@@ -51,7 +54,7 @@ export const ClientLogos: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.35, delay: i * 0.05 }}
-                className={`group flex items-center justify-center rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2 ${item.wrapperClass ?? ''}`}
+                className={`group flex shrink-0 items-center justify-center rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2 ${item.wrapperClass ?? ''}`}
               >
                 <span className="inline-flex items-center justify-center transition-transform duration-200 ease-out will-change-transform group-hover:scale-110 origin-center">
                   {inner}
@@ -59,6 +62,7 @@ export const ClientLogos: React.FC = () => {
               </motion.a>
             );
           })}
+          </div>
         </div>
       </div>
     </section>
