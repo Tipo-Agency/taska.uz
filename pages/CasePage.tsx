@@ -7,7 +7,7 @@ import { MarketingPageShell } from '../components/MarketingPageShell';
 import { useLanguage } from '../contexts/LanguageContext';
 import { isCaseSlug, type CaseSlug } from '../config/cases';
 import { paths } from '../routes/paths';
-import { trackMetrikaGoal } from '../services/metrics';
+import { trackDemoClick } from '../services/analytics';
 import type { AppOutletContext } from '../layouts/AppLayout';
 
 const PAIN_KEYS = ['pain1', 'pain2', 'pain3'] as const;
@@ -36,7 +36,7 @@ const CasePage: React.FC = () => {
         target="_blank"
         rel="noopener noreferrer"
         className="w-full sm:w-auto"
-        onClick={() => trackMetrikaGoal('demo_click')}
+        onClick={() => trackDemoClick()}
       >
         <Button variant="secondary" size="md" className="w-full sm:w-auto min-w-[180px] gap-2" icon={<ExternalLink size={17} />}>
           {t('hero.demo')}

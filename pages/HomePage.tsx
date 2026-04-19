@@ -13,7 +13,7 @@ import { ContactForm } from '../components/ContactForm';
 import { Button } from '../components/Button';
 import { CtaBand } from '../components/CtaBand';
 import { ArrowRight } from 'lucide-react';
-import { trackMetrikaGoal } from '../services/metrics';
+import { trackDemoClick } from '../services/analytics';
 import { useLanguage } from '../contexts/LanguageContext';
 import type { AppOutletContext } from '../layouts/AppLayout';
 
@@ -100,7 +100,7 @@ const HomePage: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full sm:w-auto"
-                  onClick={() => trackMetrikaGoal('demo_click')}
+                  onClick={() => trackDemoClick()}
                 >
                   <Button
                     variant="outline"

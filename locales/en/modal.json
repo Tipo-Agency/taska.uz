@@ -1,4 +1,5 @@
 {
+  "modal.close": "Close",
   "modal.startProject": "Start a Project",
   "modal.hint": "Tell us a little about the problem and we will offer a solution.",
   "modal.namePlaceholder": "your name",

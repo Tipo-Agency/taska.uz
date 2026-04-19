@@ -5,7 +5,7 @@ import { Footer } from '../components/Footer';
 import { ContactModal } from '../components/ContactModal';
 import { ScrollToTop } from '../components/ScrollToTop';
 import { SeoHead } from '../components/SeoHead';
-import { trackMetrikaGoal } from '../services/metrics';
+import { trackFormOpen } from '../services/analytics';
 
 export type AppOutletContext = {
   openModal: () => void;
@@ -15,7 +15,7 @@ export const AppLayout: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = useCallback(() => {
-    trackMetrikaGoal('click_form_open');
+    trackFormOpen();
     setIsModalOpen(true);
   }, []);
 

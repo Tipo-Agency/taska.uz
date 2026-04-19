@@ -203,7 +203,7 @@ export const Features: React.FC = () => {
       <div className="absolute -left-32 top-1/4 w-[420px] h-[420px] rounded-full bg-gradient-to-tr from-brand/12 via-transparent to-sky-500/10 blur-3xl pointer-events-none" />
       <div className="absolute right-0 bottom-0 w-[min(100%,520px)] h-[520px] bg-gradient-to-tl from-violet-500/8 via-transparent to-transparent blur-[100px] pointer-events-none" />
 
-      <svg className="absolute inset-0 w-full h-full opacity-[0.07] pointer-events-none hidden lg:block" aria-hidden>
+      <svg className="absolute inset-0 w-full h-full opacity-[0.07] pointer-events-none hidden lg:block" aria-hidden="true">
         <defs>
           <linearGradient id="feat-line" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="rgb(22,163,74)" />
@@ -245,7 +245,7 @@ export const Features: React.FC = () => {
                 </span>
                 <span
                   className="absolute -inset-x-1 -inset-y-0.5 bg-gradient-to-r from-brand/15 via-emerald-500/10 to-sky-500/10 rounded-lg -rotate-1 pointer-events-none"
-                  aria-hidden
+                  aria-hidden="true"
                 />
               </span>
             </motion.h2>
@@ -329,14 +329,14 @@ export const Features: React.FC = () => {
               >
                 <div
                   className={`absolute -inset-[1px] rounded-[1.4rem] bg-gradient-to-br opacity-70 group-hover:opacity-100 transition-opacity duration-500 ${item.rim}`}
-                  aria-hidden
+                  aria-hidden="true"
                 />
                 <div
                   className={`relative h-full rounded-[1.35rem] border border-slate-200/90 bg-white/95 backdrop-blur-md p-6 md:p-7 shadow-[0_22px_55px_-32px_rgba(15,23,42,0.18)] group-hover:shadow-[0_32px_70px_-28px_rgba(15,23,42,0.22)] transition-all duration-300 flex flex-col overflow-hidden`}
                 >
                   <div
                     className={`pointer-events-none absolute -right-8 -top-8 w-36 h-36 rounded-full opacity-30 group-hover:opacity-50 transition-opacity bg-gradient-to-br ${item.rim}`}
-                    aria-hidden
+                    aria-hidden="true"
                   />
                   <div className="relative z-10 flex flex-col h-full">
                     <div className="flex justify-between items-start gap-3 mb-1">

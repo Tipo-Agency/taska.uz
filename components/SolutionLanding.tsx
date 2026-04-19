@@ -39,7 +39,7 @@ import { TelegramSection } from './TelegramSection';
 import { solutionPageTheme } from '../config/solutionPageTheme';
 import { SOLUTION_SLUGS, type SolutionSlug } from '../config/siteNavigation';
 import { paths } from '../routes/paths';
-import { trackMetrikaGoal } from '../services/metrics';
+import { trackDemoClick } from '../services/analytics';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const PAIN_KEYS = ['pain1', 'pain2', 'pain3'] as const;
@@ -148,7 +148,7 @@ export const SolutionLanding: React.FC<SolutionLandingProps> = ({ slug, onOpenMo
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto"
-                onClick={() => trackMetrikaGoal('demo_click')}
+                onClick={() => trackDemoClick()}
               >
                 <Button variant="secondary" size="md" className="w-full sm:w-auto min-w-[180px] gap-2" icon={<ExternalLink size={17} />}>
                   {t('hero.demo')}
@@ -221,7 +221,7 @@ export const SolutionLanding: React.FC<SolutionLandingProps> = ({ slug, onOpenMo
           </motion.div>
           <div className="grid sm:grid-cols-2 gap-5 md:gap-6 max-w-5xl">
             {B_KEYS.map((k, i) => {
-              const Icon = AUTO_ICONS_BY_SLUG[slug][i];
+              const Icon = AUTO_ICONS_BY_SLUG[slug][i]!;
               return (
                 <motion.div
                   key={k}
@@ -338,7 +338,7 @@ export const SolutionLanding: React.FC<SolutionLandingProps> = ({ slug, onOpenMo
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto"
-                onClick={() => trackMetrikaGoal('demo_click')}
+                onClick={() => trackDemoClick()}
               >
                 <Button variant="secondary" className="w-full sm:w-auto">
                   {t('hero.demo')}
@@ -380,7 +380,7 @@ export const SolutionLanding: React.FC<SolutionLandingProps> = ({ slug, onOpenMo
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full sm:w-auto"
-                  onClick={() => trackMetrikaGoal('demo_click')}
+                  onClick={() => trackDemoClick()}
                 >
                   <Button variant="outline" className="w-full sm:w-auto border-white/40 bg-transparent text-white hover:bg-white/10">
                     {t('hero.demo')}

@@ -6,6 +6,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 export const ProcessSection: React.FC = () => {
   const { t } = useLanguage();
   const reduceMotion = useReducedMotion();
+  const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
   const items = [
     { title: t('process.noCode'), desc: t('process.noCodeDesc') },
     { title: t('process.autoActions'), desc: t('process.autoActionsDesc') },
@@ -18,7 +19,7 @@ export const ProcessSection: React.FC = () => {
         initial: { opacity: 0, y: 10 },
         whileInView: { opacity: 1, y: 0 },
         viewport: { once: true, margin: '-40px' },
-        transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
+        transition: { duration: 0.35, ease: EASE },
       };
 
   const cardEnter = (delay: number) =>
@@ -28,7 +29,7 @@ export const ProcessSection: React.FC = () => {
           initial: { opacity: 0, y: 8 },
           whileInView: { opacity: 1, y: 0 },
           viewport: { once: true, margin: '-20px' },
-          transition: { duration: 0.3, delay, ease: [0.16, 1, 0.3, 1] },
+          transition: { duration: 0.3, delay, ease: EASE },
         };
 
   return (
@@ -67,7 +68,7 @@ export const ProcessSection: React.FC = () => {
                     initial: { opacity: 0, y: 12 },
                     whileInView: { opacity: 1, y: 0 },
                     viewport: { once: true, margin: '-40px' },
-                    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+                    transition: { duration: 0.4, ease: EASE },
                   })}
               className="relative bg-white rounded-3xl border border-gray-200 shadow-2xl px-4 pt-20 pb-8 sm:px-6 sm:pb-10 bg-grid-pattern"
             >

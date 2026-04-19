@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowRight, ExternalLink } from 'lucide-react';
 import { Button } from './Button';
-import { trackMetrikaGoal } from '../services/metrics';
+import { trackDemoClick } from '../services/analytics';
 import { useLanguage } from '../contexts/LanguageContext';
 
 type CtaBandProps = {
@@ -36,7 +36,7 @@ export const CtaBand: React.FC<CtaBandProps> = ({
             target="_blank"
             rel="noopener noreferrer"
             className="w-full sm:w-auto"
-            onClick={() => trackMetrikaGoal('demo_click')}
+            onClick={() => trackDemoClick()}
           >
             <Button variant="secondary" className="w-full sm:w-auto gap-2" icon={<ExternalLink size={18} />}>
               {t('hero.demo')}

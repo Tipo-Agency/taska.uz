@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { fadeUp } from '../constants/motion';
 import { ArrowRight, ExternalLink } from 'lucide-react';
 import { Button } from './Button';
 import { CtaBand } from './CtaBand';
@@ -9,7 +10,7 @@ import { ContactForm } from './ContactForm';
 import { FAQ } from './FAQ';
 import { TelegramSection } from './TelegramSection';
 import { paths } from '../routes/paths';
-import { trackMetrikaGoal } from '../services/metrics';
+import { trackDemoClick } from '../services/analytics';
 import { useLanguage } from '../contexts/LanguageContext';
 
 export type MarketingAccent = 'emerald' | 'sky' | 'amber' | 'indigo' | 'cyan' | 'violet' | 'slate';
@@ -121,24 +122,15 @@ export const MarketingPageShell: React.FC<MarketingPageShellProps> = ({
             to={backLink.to}
             className="inline-flex items-center gap-2 text-sm font-medium text-ink-muted hover:text-brand mb-6 md:mb-8 transition-colors duration-200"
           >
-            <span aria-hidden>←</span>
+            <span aria-hidden="true">←</span>
             {backLabel}
           </Link>
 
           <div className={isCenter ? 'max-w-4xl mx-auto text-center' : 'max-w-3xl'}>
-            <motion.p
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-xs font-bold uppercase tracking-[0.2em] text-brand mb-3 md:mb-4"
-            >
+            <motion.p {...fadeUp(12)} className="text-xs font-bold uppercase tracking-[0.2em] text-brand mb-3 md:mb-4">
               {kicker}
             </motion.p>
-            <motion.h1
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.05 }}
-              className={`${titleClass} font-bold text-ink leading-[1.1] tracking-tight mb-4 md:mb-5`}
-            >
+            <motion.h1 {...fadeUp(16)} transition={{ delay: 0.05 }} className={`${titleClass} font-bold text-ink leading-[1.1] tracking-tight mb-4 md:mb-5`}>
               {title}
             </motion.h1>
             <motion.div
@@ -146,12 +138,11 @@ export const MarketingPageShell: React.FC<MarketingPageShellProps> = ({
               animate={{ opacity: 1, scaleX: 1 }}
               transition={{ delay: 0.12 }}
               className={`h-1.5 w-20 md:w-28 rounded-full bg-gradient-to-r ${a.bar} mb-5 md:mb-6 ${isCenter ? 'mx-auto' : ''}`}
-              aria-hidden
+              aria-hidden="true"
             />
             {lead ? (
               <motion.p
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
+                {...fadeUp(14)}
                 transition={{ delay: 0.1 }}
                 className={`text-lg md:text-xl text-ink-muted leading-relaxed ${isCenter ? 'max-w-2xl mx-auto' : 'max-w-2xl'} mb-6 md:mb-8`}
               >
@@ -160,8 +151,7 @@ export const MarketingPageShell: React.FC<MarketingPageShellProps> = ({
             ) : null}
             {heroActions ? (
               <motion.div
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
+                {...fadeUp(12)}
                 transition={{ delay: 0.15 }}
                 className={isCenter ? 'flex flex-col sm:flex-row items-center justify-center gap-3' : 'flex flex-col sm:flex-row gap-3'}
               >
@@ -223,7 +213,7 @@ export const MarketingPageShell: React.FC<MarketingPageShellProps> = ({
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full sm:w-auto"
-                      onClick={() => trackMetrikaGoal('demo_click')}
+                      onClick={() => trackDemoClick()}
                     >
                       <Button variant="outline" className="w-full sm:w-auto border-white/40 bg-transparent text-white hover:bg-white/10">
                         {t('hero.demo')}

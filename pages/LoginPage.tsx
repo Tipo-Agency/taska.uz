@@ -5,7 +5,7 @@ import { ExternalLink, ShieldCheck, Sparkles, LayoutDashboard } from 'lucide-rea
 import { Button } from '../components/Button';
 import { useLanguage } from '../contexts/LanguageContext';
 import { paths } from '../routes/paths';
-import { trackMetrikaGoal } from '../services/metrics';
+import { trackDemoClick } from '../services/analytics';
 import type { AppOutletContext } from '../layouts/AppLayout';
 
 const LoginPage: React.FC = () => {
@@ -52,7 +52,7 @@ const LoginPage: React.FC = () => {
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex sm:flex-initial"
-            onClick={() => trackMetrikaGoal('demo_click')}
+            onClick={() => trackDemoClick()}
           >
             <Button className="w-full sm:w-auto gap-2" icon={<ExternalLink size={18} />}>
               {t('login.openDemo')}

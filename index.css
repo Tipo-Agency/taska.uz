@@ -8,7 +8,7 @@
 :root {
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --color-ink: #0f172a;
-  --color-muted: #64748b;
+  --color-muted: #475569;
   --ring-brand: rgba(44, 126, 32, 0.28);
 }
 

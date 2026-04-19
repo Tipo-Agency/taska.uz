@@ -1,9 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { fadeUp } from '../constants/motion';
 import { ArrowRight, ExternalLink } from 'lucide-react';
 import { Button } from './Button';
 import { HomeHeroTabsVisual } from './HomeHeroTabsVisual';
-import { trackMetrikaGoal } from '../services/metrics';
+import { trackDemoClick } from '../services/analytics';
 import { useLanguage } from '../contexts/LanguageContext';
 
 interface HeroProps {
@@ -21,19 +22,10 @@ export const Hero: React.FC<HeroProps> = ({ onOpenModal }) => {
 
       <div className="container mx-auto px-4 relative z-10 flex flex-col items-center">
         <div className="max-w-4xl mx-auto text-center mb-6 md:mb-10">
-          <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-xs font-bold uppercase tracking-[0.2em] text-brand mb-4"
-          >
+          <motion.p {...fadeUp(12)} className="text-xs font-bold uppercase tracking-[0.2em] text-brand mb-4">
             {t('home.hero.kicker')}
           </motion.p>
-          <motion.h1
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-bold text-ink leading-[1.1] tracking-tight mb-4 md:mb-5"
-          >
+          <motion.h1 {...fadeUp(16)} transition={{ delay: 0.05 }} className="text-4xl md:text-5xl lg:text-6xl font-bold text-ink leading-[1.1] tracking-tight mb-4 md:mb-5">
             {t('hero.title1')} <br className="hidden sm:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-brand-dark">{t('hero.title2')}</span>
           </motion.h1>
@@ -42,22 +34,12 @@ export const Hero: React.FC<HeroProps> = ({ onOpenModal }) => {
             animate={{ opacity: 1, scaleX: 1 }}
             transition={{ delay: 0.12 }}
             className="h-1.5 w-20 md:w-28 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 mb-5 md:mb-6 mx-auto"
-            aria-hidden
+            aria-hidden="true"
           />
-          <motion.p
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-lg md:text-xl text-ink-muted leading-relaxed max-w-2xl mx-auto mb-6 md:mb-8"
-          >
+          <motion.p {...fadeUp(14)} transition={{ delay: 0.1 }} className="text-lg md:text-xl text-ink-muted leading-relaxed max-w-2xl mx-auto mb-6 md:mb-8">
             {t('hero.subtitle')}
           </motion.p>
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-3"
-          >
+          <motion.div {...fadeUp(12)} transition={{ delay: 0.15 }} className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button size="md" className="w-full sm:w-auto min-w-[160px]" icon={<ArrowRight size={18} />} onClick={onOpenModal}>
               {t('hero.orderSystem')}
             </Button>
@@ -66,7 +48,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenModal }) => {
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto"
-              onClick={() => trackMetrikaGoal('demo_click')}
+              onClick={() => trackDemoClick()}
             >
               <Button variant="secondary" size="md" className="w-full sm:w-auto min-w-[160px] gap-2" icon={<ExternalLink size={18} />}>
                 {t('hero.demo')}

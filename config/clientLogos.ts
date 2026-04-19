@@ -1,13 +1,22 @@
 import logo22412 from '../logo/22412.svg';
 import logo3132 from '../logo/3132.svg';
 import logoBirusa from '../logo/birusa-0e4494.svg';
+import logoChiranaAsia from '../logo/chirana-asia.png';
 import logoHaier from '../logo/Haier_logo.svg';
 import logoSemurg from '../logo/semurg.svg';
+import logoUniquePrint from '../logo/uniqueprint.svg';
 
 export type ClientLogoItem = {
   src: string;
   href: string;
-  altKey: 'home.clients.logoAlt1' | 'home.clients.logoAlt2' | 'home.clients.logoAlt3' | 'home.clients.logoAlt4' | 'home.clients.logoAlt5';
+  altKey:
+    | 'home.clients.logoAlt1'
+    | 'home.clients.logoAlt2'
+    | 'home.clients.logoAlt3'
+    | 'home.clients.logoAlt4'
+    | 'home.clients.logoAlt5'
+    | 'home.clients.logoAlt6'
+    | 'home.clients.logoAlt7';
   className?: string;
   wrapperClass?: string;
   /** Fill logo shape with solid color (SVG is light on transparent). */
@@ -44,5 +53,17 @@ export const CLIENT_LOGO_ITEMS: ClientLogoItem[] = [
     href: 'https://tipa.uz/ru',
     altKey: 'home.clients.logoAlt5',
     className: 'h-8 md:h-10 w-auto max-w-[100px] object-contain opacity-90',
+  },
+  {
+    src: logoChiranaAsia,
+    href: 'https://www.chirana-asia.uz/',
+    altKey: 'home.clients.logoAlt6',
+    className: 'h-10 md:h-12 w-auto max-w-[120px] object-contain',
+  },
+  {
+    src: logoUniquePrint,
+    href: 'https://uniqueprint.uz/',
+    altKey: 'home.clients.logoAlt7',
+    className: 'h-7 md:h-9 w-auto max-w-[160px] object-contain',
   },
 ];

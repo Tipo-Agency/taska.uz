@@ -4,6 +4,7 @@ import './index.css';
 import { registerSW } from 'virtual:pwa-register';
 import App from './App';
 import { LanguageProvider } from './contexts/LanguageContext';
+import { AppErrorBoundary } from './components/ErrorBoundary';
 
 registerSW({ immediate: true });
 
@@ -16,7 +17,9 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <LanguageProvider>
-      <App />
+      <AppErrorBoundary>
+        <App />
+      </AppErrorBoundary>
     </LanguageProvider>
   </React.StrictMode>
 );

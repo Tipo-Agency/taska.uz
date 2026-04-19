@@ -36,27 +36,27 @@ export const Footer: React.FC = () => {
                 aria-label="Telegram"
                 className="w-10 h-10 rounded-full bg-canvas-elevated border border-slate-200/90 flex items-center justify-center text-ink-muted hover:bg-brand hover:text-white hover:border-brand transition-all duration-200 shadow-soft"
               >
-                <Send size={18} />
+                <Send size={18} aria-hidden />
               </a>
               <a
                 href="https://www.instagram.com/taska.uz/"
                 aria-label="Instagram"
                 className="w-10 h-10 rounded-full bg-canvas-elevated border border-slate-200/90 flex items-center justify-center text-ink-muted hover:bg-brand hover:text-white hover:border-brand transition-all duration-200 shadow-soft"
               >
-                <Instagram size={18} />
+                <Instagram size={18} aria-hidden />
               </a>
               <a
                 href="https://www.facebook.com/profile.php?id=61585811099904#"
                 aria-label="Facebook"
                 className="w-10 h-10 rounded-full bg-canvas-elevated border border-slate-200/90 flex items-center justify-center text-ink-muted hover:bg-brand hover:text-white hover:border-brand transition-all duration-200 shadow-soft"
               >
-                <Facebook size={18} />
+                <Facebook size={18} aria-hidden />
               </a>
             </div>
           </div>
 
           <div>
-            <h4 className="text-ink font-semibold mb-5 tracking-tight">{t('footer.solutions')}</h4>
+            <h2 className="text-ink font-semibold mb-5 tracking-tight text-base">{t('footer.solutions')}</h2>
             <ul className="space-y-3 text-sm text-ink-muted">
               {SOLUTION_SLUGS.map((slug) => (
                 <li key={slug}>
@@ -69,7 +69,7 @@ export const Footer: React.FC = () => {
           </div>
 
           <div>
-            <h4 className="text-ink font-semibold mb-5 tracking-tight">{t('footer.modules')}</h4>
+            <h2 className="text-ink font-semibold mb-5 tracking-tight text-base">{t('footer.modules')}</h2>
             <ul className="space-y-3 text-sm text-ink-muted">
               {MODULE_IDS.map((id) => (
                 <li key={id}>
@@ -82,7 +82,7 @@ export const Footer: React.FC = () => {
           </div>
 
           <div>
-            <h4 className="text-ink font-semibold mb-5 tracking-tight">{t('footer.company')}</h4>
+            <h2 className="text-ink font-semibold mb-5 tracking-tight text-base">{t('footer.company')}</h2>
             <ul className="space-y-3 text-sm text-ink-muted">
               <li>
                 <Link to={paths.work} className="hover:text-brand transition-colors duration-200">
@@ -118,7 +118,7 @@ export const Footer: React.FC = () => {
           </div>
 
           <div>
-            <h4 className="text-ink font-semibold mb-5 tracking-tight">{t('footer.contacts')}</h4>
+            <h2 className="text-ink font-semibold mb-5 tracking-tight text-base">{t('footer.contacts')}</h2>
             <ul className="space-y-3 text-sm text-ink-muted">
               <li>Tashkent, Uzbekistan</li>
               <li>

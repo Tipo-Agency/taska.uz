@@ -5,7 +5,7 @@ import { ArrowRight, ExternalLink } from 'lucide-react';
 import { Button } from '../components/Button';
 import { MarketingPageShell } from '../components/MarketingPageShell';
 import { useLanguage } from '../contexts/LanguageContext';
-import { trackMetrikaGoal } from '../services/metrics';
+import { trackDemoClick } from '../services/analytics';
 import type { AppOutletContext } from '../layouts/AppLayout';
 
 const SECTION_KEYS = ['s1', 's2', 's3', 's4', 's5'] as const;
@@ -24,7 +24,7 @@ const WorkOrganizationPage: React.FC = () => {
         target="_blank"
         rel="noopener noreferrer"
         className="w-full sm:w-auto"
-        onClick={() => trackMetrikaGoal('demo_click')}
+        onClick={() => trackDemoClick()}
       >
         <Button variant="secondary" size="md" className="w-full sm:w-auto min-w-[180px] gap-2" icon={<ExternalLink size={17} />}>
           {t('hero.demo')}

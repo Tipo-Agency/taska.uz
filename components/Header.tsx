@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useClickOutside } from '../hooks/useClickOutside';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Menu,
@@ -121,22 +122,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as Node;
-      if (
-        solutionsRef.current?.contains(target) ||
-        modulesRef.current?.contains(target) ||
-        companyRef.current?.contains(target) ||
-        langRef.current?.contains(target)
-      )
-        return;
-      setOpenDropdown(null);
-      setLangMenuOpen(false);
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  useClickOutside([solutionsRef, modulesRef, companyRef, langRef], () => {
+    setOpenDropdown(null);
+    setLangMenuOpen(false);
+  });
 
   useEffect(() => {
     setOpenDropdown(null);
@@ -200,9 +189,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
                   onClick={() => setOpenDropdown((v) => (v === 'solutions' ? null : 'solutions'))}
                   className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-ink-muted hover:text-ink rounded-full hover:bg-slate-100/90 transition-colors duration-200"
                   aria-expanded={openDropdown === 'solutions'}
+                  aria-haspopup="menu"
                 >
                   {t('header.nav.solutions')}
-                  <ChevronDown size={16} className={`opacity-60 transition-transform ${openDropdown === 'solutions' ? 'rotate-180' : ''}`} />
+                  <ChevronDown size={16} className={`opacity-60 transition-transform ${openDropdown === 'solutions' ? 'rotate-180' : ''}`} aria-hidden />
                 </button>
                 <HeaderNavDropdown
                   open={openDropdown === 'solutions'}
@@ -221,7 +211,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
                         to={paths.solution(slug)}
                         title={t(`solutions.${slug}.menu`)}
                         description={t(`solutions.${slug}.title`)}
-                        icon={<SolIcon size={18} strokeWidth={2} />}
+                        icon={<SolIcon size={18} strokeWidth={2} aria-hidden />}
                         iconBoxClassName={solutionIconStyles[slug]}
                         onNavigate={() => setOpenDropdown(null)}
                       />
@@ -236,9 +226,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
                   onClick={() => setOpenDropdown((v) => (v === 'modules' ? null : 'modules'))}
                   className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-ink-muted hover:text-ink rounded-full hover:bg-slate-100/90 transition-colors duration-200"
                   aria-expanded={openDropdown === 'modules'}
+                  aria-haspopup="menu"
                 >
                   {t('header.nav.modulesMenu')}
-                  <ChevronDown size={16} className={`opacity-60 transition-transform ${openDropdown === 'modules' ? 'rotate-180' : ''}`} />
+                  <ChevronDown size={16} className={`opacity-60 transition-transform ${openDropdown === 'modules' ? 'rotate-180' : ''}`} aria-hidden />
                 </button>
                 <HeaderNavDropdown
                   open={openDropdown === 'modules'}
@@ -257,7 +248,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
                         to={paths.module(id)}
                         title={t(`modules.${id}.label`)}
                         description={t(`modules.${id}.title`)}
-                        icon={<ModIcon size={18} strokeWidth={2} />}
+                        icon={<ModIcon size={18} strokeWidth={2} aria-hidden />}
                         iconBoxClassName={moduleIconStyles[id]}
                         onNavigate={() => setOpenDropdown(null)}
                       />
@@ -272,9 +263,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
                   onClick={() => setOpenDropdown((v) => (v === 'company' ? null : 'company'))}
                   className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-ink-muted hover:text-ink rounded-full hover:bg-slate-100/90 transition-colors duration-200"
                   aria-expanded={openDropdown === 'company'}
+                  aria-haspopup="menu"
                 >
                   {t('header.nav.company')}
-                  <ChevronDown size={16} className={`opacity-60 transition-transform ${openDropdown === 'company' ? 'rotate-180' : ''}`} />
+                  <ChevronDown size={16} className={`opacity-60 transition-transform ${openDropdown === 'company' ? 'rotate-180' : ''}`} aria-hidden />
                 </button>
                 <HeaderNavDropdown
                   open={openDropdown === 'company'}
@@ -326,7 +318,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
                         to={to}
                         title={t(labelKey)}
                         description={t(descKey)}
-                        icon={<CompIcon size={18} strokeWidth={2} />}
+                        icon={<CompIcon size={18} strokeWidth={2} aria-hidden />}
                         iconBoxClassName={meta.box}
                         onNavigate={() => setOpenDropdown(null)}
                       />
@@ -348,7 +340,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
                   aria-label={lang === 'ru' ? 'Русский' : lang === 'uz' ? 'Oʻzbekcha' : 'English'}
                 >
                   {lang === 'ru' ? 'RU' : lang === 'uz' ? 'UZ' : 'EN'}
-                  <ChevronDown size={16} className={`opacity-60 shrink-0 transition-transform ${langMenuOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown size={16} className={`opacity-60 shrink-0 transition-transform ${langMenuOpen ? 'rotate-180' : ''}`} aria-hidden />
                 </button>
                 <AnimatePresence>
                   {langMenuOpen && (
@@ -399,7 +391,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenModal }) => {
                 aria-label={isMobileMenuOpen ? t('header.menu.close') : t('header.menu.open')}
                 aria-expanded={isMobileMenuOpen}
               >
-                {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+                {isMobileMenuOpen ? <X size={20} aria-hidden /> : <Menu size={20} aria-hidden />}
               </button>
             </div>
           </div>

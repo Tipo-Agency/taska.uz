@@ -1,5 +1,5 @@
 import type { Lead } from '../types';
-import { trackMetrikaGoal } from './metrics';
+import { trackLeadSubmit } from './analytics';
 import { getCurrentUTMParams } from './utmTracking';
 
 /**
@@ -43,7 +43,7 @@ function buildPhoneLines(rawContact: string): { display: string; compact: string
   if (!raw) return { display: '', compact: '' };
   if (raw.startsWith('+')) {
     const parts = raw.split(/\s+/);
-    const cc = parts[0];
+    const cc = parts[0]!;
     const local = parts.slice(1).join(' ') || raw.slice(cc.length).trim();
     const display = `${cc} ${local}`.trim();
     const compact = `${cc}${local.replace(/\s/g, '')}`;
@@ -133,7 +133,7 @@ export const submitLead = async (leadData: Lead): Promise<boolean> => {
     const payload = buildSiteLeadPayload(leadData);
     const ok = await postSiteLeadToTipa(payload);
     if (ok) {
-      trackMetrikaGoal('lead_submit');
+      trackLeadSubmit();
     }
     return ok;
   } catch (error) {

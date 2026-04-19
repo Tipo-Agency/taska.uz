@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import { X, Send, CheckCircle, Phone, XCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './Button';
@@ -14,6 +14,8 @@ interface ContactModalProps {
 
 export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
   const { t } = useLanguage();
+  const nameFieldId = useId();
+  const phoneFieldId = useId();
   const [submitted, setSubmitted] = useState(false);
   const [outcome, setOutcome] = useState<'success' | 'error' | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -64,30 +66,43 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             className="fixed inset-0 flex items-center justify-center z-[70] pointer-events-none p-4"
+            role="presentation"
           >
-            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden pointer-events-auto relative">
-              <button 
+            <div
+              className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden pointer-events-auto relative"
+              role="dialog"
+              aria-modal="true"
+              {...(submitted
+                ? {
+                    'aria-label':
+                      outcome === 'success' ? t('modal.successTitle') : t('contact.errorTitle'),
+                  }
+                : { 'aria-labelledby': 'contact-modal-title' })}
+            >
+              <button
+                type="button"
                 onClick={onClose}
                 className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-900 transition-colors z-10"
+                aria-label={t('modal.close')}
               >
-                <X size={20} />
+                <X size={20} aria-hidden />
               </button>
 
               <div className="p-8">
                 {submitted ? (
-                  <div className="flex flex-col items-center justify-center text-center py-10">
+                  <div className="flex flex-col items-center justify-center text-center py-10" role="status" aria-live="polite">
                     {outcome === 'success' ? (
                       <>
-                        <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center text-brand mb-4">
-                          <CheckCircle size={32} />
+                        <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center text-brand mb-4" aria-hidden>
+                          <CheckCircle size={32} aria-hidden />
                         </div>
                         <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('modal.successTitle')}</h3>
                         <p className="text-gray-500 mb-6">{t('modal.successText')}</p>
                       </>
                     ) : (
                       <>
-                        <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center text-red-600 mb-4 border border-red-200/80">
-                          <XCircle size={32} />
+                        <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center text-red-600 mb-4 border border-red-200/80" aria-hidden>
+                          <XCircle size={32} aria-hidden />
                         </div>
                         <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('contact.errorTitle')}</h3>
                         <p className="text-gray-500 mb-6 text-sm leading-relaxed max-w-sm">{t('contact.errorText')}</p>
@@ -98,25 +113,41 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
                 ) : (
                   <form data-testid="contact-modal-form" onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                      <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('modal.startProject')}</h3>
+                      <h3 id="contact-modal-title" className="text-2xl font-bold text-gray-900 mb-2">
+                        {t('modal.startProject')}
+                      </h3>
                       <p className="text-sm text-gray-500 mb-4">{t('modal.hint')}</p>
                     </div>
 
-                    <input 
+                    <label htmlFor={nameFieldId} className="sr-only">
+                      {t('contact.nameLabel')}
+                    </label>
+                    <input
+                      id={nameFieldId}
+                      name="name"
+                      autoComplete="name"
                       required
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      type="text" 
+                      type="text"
                       placeholder={t('modal.namePlaceholder')}
                       className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-brand/20 focus:border-brand/50 outline-none transition-all"
                     />
                     <div className="flex rounded-xl border border-gray-200 overflow-hidden bg-gray-50 focus-within:ring-2 focus-within:ring-brand/20 focus-within:border-brand/50 focus-within:bg-white">
-                      <span className="flex items-center px-4 bg-gray-100 text-gray-600 border-r border-gray-200 text-sm font-medium">+998</span>
-                      <input 
+                      <span className="flex items-center px-4 bg-gray-100 text-gray-600 border-r border-gray-200 text-sm font-medium" aria-hidden>
+                        +998
+                      </span>
+                      <label htmlFor={phoneFieldId} className="sr-only">
+                        {t('contact.phoneLabel')}
+                      </label>
+                      <input
+                        id={phoneFieldId}
+                        name="tel"
+                        autoComplete="tel"
                         required
                         value={contact}
                         onChange={(e) => setContact(formatUzPhoneLocal(e.target.value))}
-                        type="tel" 
+                        type="tel"
                         inputMode="numeric"
                         maxLength={12}
                         placeholder="90 123 45 67"
